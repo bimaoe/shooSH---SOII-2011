@@ -62,6 +62,8 @@ public:
 		for (i = 0; i < line.length(); i++) {
 			if (line[i] == ' ') {
 				cmd += '\0';
+				it = keywordList.find (cmd);
+				if (it != keywordList.end())	cmd[0] = '\0';
 				cmdList.push_back(cmd);
 				cmd.clear();
 			} else {
