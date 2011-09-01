@@ -54,15 +54,15 @@ public:
 		std::string cmd, line;
 		int i;
 		
-		std::cout << "Ganash> ";
+		std::cout << "shooSH> ";
 		getline (std::cin, line);
 		
 		cmdList.clear();
 		
 		for (i = 0; i < line.length(); i++) {
-			if (line[i] == ' ') {
+			if (line[i] == ' ') { //se for espaco, termina o comando atual e insere
 				cmd += '\0';
-				it = keywordList.find (cmd);
+				it = keywordList.find (cmd); //checa se eh uma keyword
 				if (it != keywordList.end())	cmd[0] = '\0';
 				cmdList.push_back(cmd);
 				cmd.clear();
@@ -72,7 +72,7 @@ public:
 		}
 		cmd += '\0';
 		cmdList.push_back(cmd);
-		cmdList.push_back("");
+		cmdList.push_back(NULL);
 		
 		printCmdList();
 		
