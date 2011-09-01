@@ -1,0 +1,12 @@
++---------------------------+
+|  Sistemas Operacionais 2  |
++---------------------------+
+
+TODO LIST
+	+ Parser
+		Separar os comandos em matriz de strings
+		
+	- 
+	
+
+A
