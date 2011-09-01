@@ -5,8 +5,12 @@
 TODO LIST
 	+ Parser
 		Separar os comandos em matriz de strings
-		
-	- 
-	
+	- Colocar comandos em background
+		Usar waitpid()
+		Imediatamente volta o controle para o pai, mesmo executando o filho
+	- Tratamento de sinais 
+		(macros abaixo em wait)
+			WNOHANG -> REtorna se nenhum filho terminou 
+			WIFEXITED -> Retorna se o rpograma encerrou
+	- Comandos built-in
 
-A
