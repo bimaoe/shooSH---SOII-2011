@@ -3,13 +3,17 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
+#define NUM_WORDS 100
+#define MAX_LENGTH 1024
 
 class Parser {
 private:
-	std::vector <std::string> cmdList;
-	std::map <std::string, int> keywordList;	
-	
+	char** cmdList;
+	int cmdListSize;
+	std::map <std::string, int> keywordList;
+
 	void loadKeyword (void) {
 		int size;
 		std::string keys;
@@ -33,54 +37,62 @@ private:
 	void printCmdList (void) {
 		int i;
 		std::cout << "Printing command list" << std::endl;
-		for (i = 0; i < cmdList.size(); i++) {
+		for (i = 0; i < cmdListSize; i++) {
 			std::cout << cmdList[i] << std::endl;
 		}
+	}
+
+	void clearCmdList (void) {
+		while (cmdListSize)	free (cmdList[cmdListSize--]);
 	}
 	
 public:
 	Parser (void) {
-		loadKeyword();
-		printKeywordList();
+		cmdListSize = 0;
+		cmdList = (char**) malloc (sizeof(char*)*NUM_WORDS);
+		cmdList[0] = (char*) malloc (sizeof(char)*MAX_LENGTH);
 	}
 	
+
 	/*
 	 * Leitura de cada linha de comando.
 	 * Retorna true se nao houve exit. 
 	 * Retorna false caso contrario.
 	 */
+	/* TODO:
+		fazer tratamento de keyword
+	*/
 	bool parseLine (void) {
 	
-		std::string cmd, line;
-		int i;
+		char line[MAX_LENGTH];
+		int i, length, currChar;
 		
 		std::cout << "shooSH> ";
-		getline (std::cin, line);
+		std::cin.getline (line, MAX_LENGTH);
 		
-		cmdList.clear();
-		
-		for (i = 0; i < line.length(); i++) {
-			if (line[i] == ' ') { //se for espaco, termina o comando atual e insere
-				cmd += '\0';
-				it = keywordList.find (cmd); //checa se eh uma keyword
-				if (it != keywordList.end())	cmd[0] = '\0';
-				cmdList.push_back(cmd);
-				cmd.clear();
+		clearCmdList();
+
+		for (i = currChar = 0, length = strlen(line); i < length; i++) {
+			if (line[i] == ' ' && currChar > 0) { //se for espaco, termina o comando atual e insere
+				cmdList[cmdListSize][currChar] = '\0';
+				currChar = 0;
+				cmdList[++cmdListSize] = (char*)malloc(sizeof(char)*MAX_LENGTH);
 			} else {
-				cmd += line[i];
+				cmdList[cmdListSize][currChar++] = line[i];
 			}
 		}
-		cmd += '\0';
-		cmdList.push_back(cmd);
-		cmdList.push_back(NULL);
-		
-		printCmdList();
-		
-		return !((cmdList.size() == 2) && (!strcmp(cmdList[0].c_str(), "exit")));
+		cmdList[cmdListSize++][currChar] = '\0';
+		cmdList[cmdListSize] = (char*)NULL;
+		return !((cmdListSize == 1) && (!strcmp(cmdList[0], "exit")));
 	}
 	
+	char** getCmdList (void) {
+		return cmdList;
+	}
 	void parse (void) {
-		while (parseLine());
+		while (parseLine()) {
+			printCmdList();
+		}
 	}
 };
 

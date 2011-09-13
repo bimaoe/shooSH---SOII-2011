@@ -1,2 +1,5 @@
 2011/09/01 Bianca
 	- Decidimos não utilizar a STL -> chamadas de sistema são em C
+2011/09/12 Bianca
+	- Executor: Implementada a função principal.
+	- Parser: Modificado para C, sem keywords.
