@@ -13,4 +13,5 @@ TODO LIST
 			WNOHANG -> REtorna se nenhum filho terminou 
 			WIFEXITED -> Retorna se o rpograma encerrou
 	- Comandos built-in
-
+		ulimit
+	- Passar o valgrind no código
