@@ -1,3 +1,5 @@
+#ifndef EXECUTOR_H
+#define EXECUTOR_H
 #include <unistd.h>
 #include <cstdio>
 #include <cstdlib>
@@ -9,7 +11,18 @@
 class Executor {
 public:
 	Executor (void) {};
-	int execute (char** cmd, bool bg) {
+	
+	/*
+		Parameters:
+			char**	command to be executed
+			bool	flag of foreground or background
+		Return:
+			bool	flag of exit
+		Throws:
+			-1		error in call of fork
+	*/
+			
+	bool execute (char** cmd, bool bg) {
 		pid_t pid;
 		int status;
 		pid = fork();
@@ -27,9 +40,4 @@ public:
 	}
 };
 
-int main(int argc, char* argv[]){
-
-	char* comando[] = {"gedi", NULL}; //dispensavel
-	Executor ex;
-	ex.execute(comando, argc > 1);
-}
+#endif

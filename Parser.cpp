@@ -5,6 +5,7 @@
 #include <map>
 #include <cstring>
 #include <cstdlib>
+#include "Executor.hpp"
 #define NUM_WORDS 100
 #define MAX_LENGTH 1024
 
@@ -12,6 +13,7 @@ class Parser {
 private:
 	char** cmdList;
 	int cmdListSize;
+	Executor executor;
 	std::map <std::string, int> keywordList;
 
 	void loadKeyword (void) {
@@ -66,23 +68,39 @@ public:
 	
 		char line[MAX_LENGTH];
 		int i, length, currChar;
-		
+		bool bg;
+
 		std::cout << "shooSH> ";
 		std::cin.getline (line, MAX_LENGTH);
 		
 		clearCmdList();
 
 		for (i = currChar = 0, length = strlen(line); i < length; i++) {
-			if (line[i] == ' ' && currChar > 0) { //se for espaco, termina o comando atual e insere
-				cmdList[cmdListSize][currChar] = '\0';
-				currChar = 0;
-				cmdList[++cmdListSize] = (char*)malloc(sizeof(char)*MAX_LENGTH);
+			 // insert the character into the word until a space is found
+			if (line[i] == ' ') {
+				if (currChar > 0) {
+					//TODO: check if the current word is a keyword
+					//TODO: check if the current command is valid
+					cmdList[cmdListSize][currChar] = '\0';
+					//if (strcmp (cmdList[cmdListSize], ">")) 
+					currChar = 0;
+					cmdList[++cmdListSize] = (char*)malloc(sizeof(char)*MAX_LENGTH);
+				}
 			} else {
 				cmdList[cmdListSize][currChar++] = line[i];
 			}
 		}
-		cmdList[cmdListSize++][currChar] = '\0';
+		// check if the command must run in background
+		cmdList[cmdListSize][currChar] = '\0';
+		if (strcmp (cmdList[cmdListSize], "&") == 0) {
+			bg = true;
+			free (cmdList[cmdListSize]);
+		} else {
+			cmdListSize++;
+			bg = false;
+		}
 		cmdList[cmdListSize] = (char*)NULL;
+		if (!((cmdListSize == 1) && (!strcmp(cmdList[0], "exit"))))	executor.execute (cmdList, bg);
 		return !((cmdListSize == 1) && (!strcmp(cmdList[0], "exit")));
 	}
 	
