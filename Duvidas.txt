@@ -1,0 +1,13 @@
+Legenda:
+	'-' duvidas pendentes
+	'+' duvidas esclarecidas
+	'=' respostas
+
+
+	+ Redirecionamento múltiplo.
+		ls > saida > saida2 > ... > saidaN
+		= Basear na bash
+		= Só escreve no último
+
+	- Pipe.
+		Vai haver problemas se fecharmos os dois descritores de arquivo? (entrada e saída)

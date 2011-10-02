@@ -3,8 +3,9 @@
 +---------------------------+
 
 TODO LIST
-	+ Parser
-		Separar os comandos em matriz de strings
+	± Parser
+		+ Separar os comandos em matriz de strings
+		- Pipe encadeado
 	- Colocar comandos em background
 		Usar waitpid()
 		Imediatamente volta o controle para o pai, mesmo executando o filho
@@ -15,3 +16,13 @@ TODO LIST
 	- Comandos built-in
 		ulimit
 	- Passar o valgrind no código
+	
+	- Redirecionamentos individuais e conjuntos
+	- SIGNALS
+		man 7 signal	sig_ign sigttou
+		man tcsetpgrp
+	
+	
+	-Fazer testes utilizando [ MALLOC_CHECK_=1 ] ou mais
+
+
