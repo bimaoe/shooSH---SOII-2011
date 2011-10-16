@@ -3,73 +3,63 @@
 
 #include <string>
 #include <unistd.h>
+#include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <iostream>
+#include "Redirector.hpp"
 
-/****************************
- *	DEFINICOES DE SINAIS	*
- ****************************/
 #define shooSH_EXIT		1
 #define shooSH_PIPE		2
 #define shooSH_REDIR	4
 #define shooSH_NOP		8
+#define shooSH_FAIL		16
 
-/********************************
- *	DEFINICOES DE ESTRUTURAS	*
- ********************************/
-
-class Process{					//fila
+class Process{
 
 	private:
-		char    	**command;		//matriz de comandos
+		char    	**command;
 		int     	cmdSize;
 		pid_t   	pid;
 		char    	finish;
 		char    	stop;
 		int     	status;
-		std::string	filename;
-		int     	flag;
+		std::string	filename[3];
+		int     	redirflag[3];
 
 	public:
 
-		Process();
-		~Process();
-
-		void    setCommand(char**, int);    //OK
-		void    setFilename(std::string, int);   //OK
-
+		Process(void);
+		void	destroy (void);
+		void    setCommand(char**, int);
+		void    setFilename(std::string, int);
+		void	print (void);
+		void* get (void) {return (void*) &command;}
 };
 
-/**
- *	Job Qualquer
- *
- */
-class Job{	//fila
+
+class Job {
 
 	private:
         std::vector<Process>	process;
-		pid_t 					pgid;			//pra dar controle habilitado para jobs
-		char* 					info;			//Qualquer notificacao existente
-		std::string 			cmd;			//nome do comando
+		pid_t 					pgid;
+		char* 					info;
+		std::string 			cmd;
 	public:
 
-		Job();
+		Job(void);
+		void		destroy (void);
+		std::string	getCommand (void);
+		void 		setCommand (std::string command);
+		void		createProcess (void);
+		Process 	getProcess (int i);
 
-		std::string	getCommand();                   //OK
-		void 		setCommand(std::string command);//OK
-		void		createProcess();                //OK
-		Process 	getProcess(int i);              //OK
-
-		void    	setProcessCommand(char**, int); //OK
-		void    	setProcessFile(std::string, int);//OK
+		void    	setProcessCommand (char**, int);
+		void    	setProcessFile (std::string, int);
+		void		print (void);
 
 };
 
-/**
- *	Job List
- *
- *	Lista com a cabeca e a cauda da lista de jobs
- */
 
 class JobList{
 	private:
@@ -84,84 +74,5 @@ class JobList{
 
 
 };
-
-/********************
- *	IMPLEMENTACOES	*
- ********************/
-
-
-/**
- *	CLASS PROCESS
- */
-
-Process::Process() {
-	command = NULL;
-	cmdSize = 0;
-}
-
-Process::~Process(){
-	if (command != NULL) {
-		printf ("%d\n", cmdSize);
-		for(int i=0; i<cmdSize; i++){
-			free(command[i]);
-		}
-		free(command);
-		printf("popo\n");
-	}
-	command = NULL;
-	cmdSize = 0;
-}
-
-void Process::setCommand(char** cmd, int size){
-
-    command = cmd;
-    cmdSize = size;
-}
-
-void Process::setFilename(std::string filename, int flag){
-    this->filename = filename;
-    this->flag = flag;
-}
-
-/**
- *	CLASS JOB
- */
-
-Job::Job(){
-
-}
-
-void Job::createProcess(){
-    process.push_back(Process());
-}
-
-Process Job::getProcess(int i){
-    return process[i];
-}
-
-void Job::setCommand(std::string command){
-    cmd = command;
-}
-
-std::string Job::getCommand(){
-    return cmd;
-}
-/*
- * coloca a matriz de comandos no ultimo processo inserido
- */
-void Job::setProcessCommand(char** cmd, int size){
-    process[process.size()-1].setCommand(cmd, size);
-}
-
-void Job::setProcessFile(std::string filename, int flag){
-    process[process.size()-1].setFilename(filename, flag);
-}
-
-/**
- *	CLASS JOB LIST
- */
-
-
-
 
 #endif

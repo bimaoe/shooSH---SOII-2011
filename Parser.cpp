@@ -1,122 +1,161 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <map>
-#include <cstring>
-#include <cstdlib>
-#include "Executor.hpp"
-#define NUM_WORDS 100
-#define MAX_LENGTH 1024
+#include "Parser.hpp"
+void Parser::initialize (void) {
+	cmdListSize = -1;
+	currChar = 0;
+	cmdList = (char**) malloc (sizeof(char*)*NUM_WORDS);
+}
+void Parser::newWord (void) {
+	cmdList[++cmdListSize] = (char*)malloc(sizeof(char)*MAX_LENGTH);
+	currChar = 0;
+}
+void Parser::endWord (void) {
+	cmdList[cmdListSize][currChar] = '\0';
+}
+void Parser::newProcess (void) {
+	initialize();
+	job->createProcess();
+}
+void Parser::endProcess (void) {
+	cmdList[++cmdListSize] = (char*)NULL;
+	job->setProcessCommand (cmdList, cmdListSize);
+}
 
-class Parser {
-private:
-	char** cmdList;
-	int cmdListSize;
-	Executor executor;
-	std::map <std::string, int> keywordList;
+Parser::Parser (void) {
+	currState = PARSCMD;
+}
 
-	void loadKeyword (void) {
-		int size;
-		std::string keys;
-		std::ifstream fin (".keyword.key", std::ifstream::in);
-		while (!fin.eof()) {
-			fin >> keys;
-			size = keywordList.size();
-			keywordList[keys] = size;
+Job* Parser::parseLine (int* out_flags) {
+	job = new Job();
+	currState = PARSCMD;
+	int i, length, curr;
+	int rflag;
+	*out_flags = 0;
+
+	std::cin.getline (line, MAX_LENGTH);
+	std::cout << line << std::endl;
+	i = 0;
+	while (i < length && line[i] == ' ')	i++;
+	length = strlen(line+i);
+	// check for blank line
+	if (length == 0) {
+		(*out_flags) |= shooSH_NOP;
+		delete job;
+		return NULL;
+	} else {
+		if (strcmp (line+i, "exit") == 0) {
+			*out_flags |= shooSH_EXIT;
+			delete job;
+			return NULL;
 		}
-		if (fin.is_open())	fin.close();
 	}
-	
-	void printKeywordList (void) {
-		std::map <std::string, int>::iterator curr, end;
-		std::cout << "Printing keyword list" << std::endl;
-		for (curr = keywordList.begin(), end = keywordList.end(); curr != end; curr++) {
-			std::cout << curr->first << " " << curr->second << std::endl;
-		}
-	}
-	
-	void printCmdList (void) {
-		int i;
-		std::cout << "Printing command list" << std::endl;
-		for (i = 0; i < cmdListSize; i++) {
-			std::cout << cmdList[i] << std::endl;
-		}
-	}
-
-	void clearCmdList (void) {
-		while (cmdListSize)	free (cmdList[cmdListSize--]);
-	}
-	
-public:
-	Parser (void) {
-		cmdListSize = 0;
-		cmdList = (char**) malloc (sizeof(char*)*NUM_WORDS);
-		cmdList[0] = (char*) malloc (sizeof(char)*MAX_LENGTH);
-	}
-	
-
-	/*
-	 * Leitura de cada linha de comando.
-	 * Retorna true se nao houve exit. 
-	 * Retorna false caso contrario.
-	 */
-	/* TODO:
-		fazer tratamento de keyword
-	*/
-	bool parseLine (void) {
-	
-		char line[MAX_LENGTH];
-		int i, length, currChar;
-		bool bg;
-
-		std::cout << "shooSH> ";
-		std::cin.getline (line, MAX_LENGTH);
-		
-		clearCmdList();
-
-		for (i = currChar = 0, length = strlen(line); i < length; i++) {
-			 // insert the character into the word until a space is found
-			if (line[i] == ' ') {
-				if (currChar > 0) {
-					//TODO: check if the current word is a keyword
-					//TODO: check if the current command is valid
-					cmdList[cmdListSize][currChar] = '\0';
-					//if (strcmp (cmdList[cmdListSize], ">")) 
-					currChar = 0;
-					cmdList[++cmdListSize] = (char*)malloc(sizeof(char)*MAX_LENGTH);
-				}
+	job->setCommand (std::string (line+i));
+	while (currState != PARSSUCCESS && currState != PARSFAIL) {
+		if (currState == PARSCMD) {
+			newProcess();
+			newWord();
+			rflag = 0;
+			// get blank spaces
+			while (i < length && line[i] == ' ')	i++;
+			// expected command but found nothing
+			if (i == length) {
+				currState = PARSFAIL;
 			} else {
-				cmdList[cmdListSize][currChar++] = line[i];
+				// get command until a blank space is found
+				while (i < length && line[i] != ' ')	cmdList[cmdListSize][currChar++] = line[i++];
+				currState = PARSNEXT;
+			}
+			endWord();
+		} else if (currState == PARSNEXT) {
+			// get blank spaces
+			while (i < length && line[i] == ' ')	i++;
+			// reached end of line successfully
+			if (i == length) {
+				currState = PARSSUCCESS;
+				endProcess();
+			} else {
+				// search for token
+				switch (line[i]) {
+					case '<':
+						i++;
+						currState = PARSRIN;
+						break;
+					case '>':
+						i++;
+						currState = PARSROUT;
+						break;
+					case '2':
+						i++;
+						currState = PARSTWO;
+						break;
+					case '|':
+						i++;
+						*out_flags |= shooSH_PIPE;
+						endProcess();
+						currState = PARSCMD;
+						break;
+					default:
+						currState = PARSPARAM;
+				}
+			}
+		} else if (currState == PARSPARAM) {
+			newWord();
+			while (i < length && line[i] != ' ')	cmdList[cmdListSize][currChar++] = line[i++];
+			currState = PARSNEXT;
+		} else if (currState == PARSTWO) {
+			if (line[i] == '>') {
+				i++;
+				endWord();
+				currState = PARSRERR;
+			} else {
+				i--;
+				currState = PARSPARAM;
+			}
+			endWord();
+		} else if (currState == PARSRERR) {
+			if (line[i] == '>') { // append
+				i++;
+				rflag = REDERRA;
+			} else { // trunc
+				rflag = REDERRT;
+			}
+			currState = PARSFILENAME;
+		} else if (currState == PARSRIN) {
+			// get blankspaces
+			rflag = REDIN;
+			currState = PARSFILENAME;
+		} else if (currState == PARSROUT) {
+			if (line[i] == '>') { // append;
+				i++;
+				rflag = REDOUTA;
+			} else { // trunc
+				rflag = REDOUTT;
+			}
+			currState = PARSFILENAME;
+		} else if (currState == PARSFILENAME) {
+			while (i < length && line[i] == ' ')	i++;
+			if (i == length)	currState = PARSFAIL; // TODO admitting the filename will be always valid
+			else {
+				curr = 0;
+				if (line[i] == '"') { // get filenames like "file name"
+					filename[curr++] = line[i++];
+					while (i < length && line[i] != '"')	filename[curr++] = line[i++];
+					if (i == length)	currState = PARSFAIL;
+					else	filename[curr++] = line[i++];
+				} else if (line[i] == '\'') { // get filenames like 'file name'
+					filename[curr++] = line[i++];
+					while (i < length && line[i] != '\'')	filename[curr++] = line[i++];
+					if (i == length)	currState = PARSFAIL;
+					else	filename[curr++] = line[i++];
+				} else {
+					while (i < length && line[i] != ' ')	filename[curr++] = line[i++];
+				}
+				filename[curr] = '\0';
+				job->setProcessFile (filename, rflag);
+				currState = PARSNEXT;
 			}
 		}
-		// check if the command must run in background
-		cmdList[cmdListSize][currChar] = '\0';
-		if (strcmp (cmdList[cmdListSize], "&") == 0) {
-			bg = true;
-			free (cmdList[cmdListSize]);
-		} else {
-			cmdListSize++;
-			bg = false;
-		}
-		cmdList[cmdListSize] = (char*)NULL;
-		if (!((cmdListSize == 1) && (!strcmp(cmdList[0], "exit"))))	executor.execute (cmdList, bg);
-		return !((cmdListSize == 1) && (!strcmp(cmdList[0], "exit")));
 	}
-	
-	char** getCmdList (void) {
-		return cmdList;
-	}
-	void parse (void) {
-		while (parseLine()) {
-			printCmdList();
-		}
-	}
-};
+	if (currState == PARSFAIL)	*out_flags |= shooSH_FAIL;
+	return job;
+}	
 
-int main (void) {
-	Parser p;
-	p.parse();
-	
-	return 0;
-}

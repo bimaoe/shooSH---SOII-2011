@@ -1,42 +1,36 @@
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include "Redirector.hpp"
+Redirector::Redirector (void) {
+	fd[0] = fd[1] = fd[2] = -1; 		// intialize the file descriptors
+	flags[0] = O_RDONLY;				// initialize flags
+	flags[1] = O_RDWR|O_CREAT|O_TRUNC;
+	flags[2] = O_RDWR|O_CREAT|O_APPEND;
+}
 
-#define REDINPUT 0
-#define REDTRUNC 1
-#define REDAPPEND 2
+void Redirector::init (char* filename[3], int flag){
+	if (flag & REDIN) {
+		fd[0] = open (filename[0], flags[0], 666); //TODO tirar essa coisa
+		dup2 (fd[0], 0);
+	}
+	if (flag & REDOUTT) {
+		fd[1] = open (filename[1], flags[1], 666);
+		dup2 (fd[1], 1);
+	} else if (flag & REDOUTA) { // to prevent from opening twice
+		fd[1] = open (filename[1], flags[2], 666);
+		dup2 (fd[1], 1);
+	}
+	if (flag & REDERRT) {
+		fd[2] = open (filename[2], flags[1], 666);
+		dup2 (fd[2], 2);
+	} else if (flag & REDERRA) {
+		fd[2] = open (filename[2], flags[2], 666);
+		dup2 (fd[2], 2);
+	}
+}
 
-class Redirector {
-	private:
-		const int flags[] = {	O_RDONLY, 
-								O_RDWR|O_CREAT|O_TRUNC,
-								O_RDWR|O_CREAT|O_APPEND }
-		std::pair <int, bool> fd[2]; //Pode ter mais de um arquivo aberto ao mesmo tempo
-		//TODO verificar multiplos redirecionamentos
-		
-	public:
-		Redirector (void) {}
-		
-		void init(char* name, int flag){
-			
-			if(!fd[0].second){
-				fd[0].first = open (filename, flags[flag], 0666); //TODO tirar essa coisa (0666)
-				fd[0].second = true;
-				dup2 (fd[0].first, flag!=0);
-			} else {
-				fd[1].first = open (filename, flags[flag], 0666); //TODO tirar essa coisa (0666)
-				fd[1].second = true;
-				dup2 (fd[1].first, flag!=0);
-			}
-		}
-		
-		void close(){
-		
-			if(fd[0].second) close(fd[0].first);
-			if(fd[1].second) close(fd[1].first);
-			
-			fd[0].second = false;
-			fd[1].second = false;
-		}
-};
+void Redirector::end(){
+	if (fd[0] != -1)	close (fd[0]);
+	if (fd[1] != -1)	close (fd[1]);
+	if (fd[2] != -1)	close (fd[2]);
+	
+	fd[0] = fd[1] = fd[2] = -1;
+}
