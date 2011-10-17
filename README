@@ -6,3 +6,8 @@
 2011/10/01 Bianca
 	-Parser: Usa o Executor. Implementa a chamada de comandos em fg e bg.
 	-Bug1: Quando o comando não existe, o executor fica executando indefinidamente e isso causa erros na chamada de exit.
+2011/10/13 Bianca
+	-Decidimos tirar a execução do parser
+2011/10/17 Bianca
+	-shooSH ficará somente com as funcionalidades do terminal
+	-Criação de arquivo Job e Process
