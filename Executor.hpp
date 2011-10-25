@@ -6,30 +6,40 @@
 #include <sys/wait.h>
 #include <vector>
 #include <iostream>
-
+#include "Process.hpp"
+#include "Job.hpp"
+#include "Piper.hpp"
 
 class Executor {
 public:
 	Executor (void) {};
 	
 	/*
+		Description:
+			Executes a process calling fork and exec
 		Parameters:
-			char**	command to be executed
+			Process	process to be executed
 			bool	flag of foreground or background
 		Return:
-			bool	flag of exit
+			Nothing.
 		Throws:
 			-1		error in call of fork
 	*/
-			
-	bool execute (char** cmd, bool bg) {
+	
+	void execute (Job* job) {
 		pid_t pid;
 		int status;
 		pid = fork();
 		if (pid < 0)	throw -1;
-		else if (pid == 0)	execvp(cmd[0], cmd);
-		else {
-			if (bg) waitpid(pid, &status, WNOHANG);
+		else if (pid == 0) {
+			if (job->hasPipe()) {
+				Piper piper;
+				piper.execPipe (job);
+			} else {
+				execvp(job->getProcess(0).getCommand()[0], job->getProcess(0).getCommand());
+			}
+		} else {
+			if (job->inBg()) waitpid(pid, &status, WNOHANG);
 			else {
 				waitpid(pid, &status, WUNTRACED);
 				if (WIFEXITED(status))	std::cout << "Child " << pid << " terminated normally with return value " << WEXITSTATUS(status) << std::endl;

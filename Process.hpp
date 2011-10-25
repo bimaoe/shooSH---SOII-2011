@@ -12,7 +12,7 @@
 class Process{
 
 	private:
-		char    	**command;
+		char**		command;
 		int     	cmdSize;
 		pid_t   	pid;
 		char    	finish;
@@ -28,7 +28,7 @@ class Process{
 		void    setCommand(char**, int);
 		void    setFilename(std::string, int);
 		void	print (void);
-		void*	get (void) {return (void*) &command;}
+		char**	getCommand (void);
 };
 
 #endif

@@ -1,7 +1,7 @@
 #include "Job.hpp"
 
 Job::Job(void){
-
+	flag = 0;
 }
 
 void Job::destroy(void) {
@@ -20,7 +20,7 @@ void Job::print (void) {
 	}
 }
 
-void Job::createProcess(){
+void Job::createProcess(void){
 	Process p;
     process.push_back(p);
 }
@@ -33,13 +33,42 @@ void Job::setCommand(std::string command){
     cmd = command;
 }
 
-std::string Job::getCommand(){
+std::string Job::getCommand(void){
     return cmd;
 }
+
+int Job::size (void) {
+	return process.size();
+}
+
 void Job::setProcessCommand(char** cmd, int size){
     process[process.size()-1].setCommand(cmd, size);
 }
 
 void Job::setProcessFile(std::string filename, int flag){
     process[process.size()-1].setFilename(filename, flag);
+}
+
+void Job::addFlag (int newflag) {
+	flag |= newflag;
+}
+
+bool Job::inBg (void) {
+	return flag & shooSH_BG != 0;
+}
+
+bool Job::hasPipe (void) {
+	return flag & shooSH_PIPE != 0;
+}
+
+bool Job::isNop (void) {
+	return flag & shooSH_NOP != 0;
+}
+
+bool Job::hasFailed (void) {
+	return flag & shooSH_FAIL != 0;
+}
+
+bool Job::hasExited (void) {
+	return flag & shooSH_EXIT != 0;
 }

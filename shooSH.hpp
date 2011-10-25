@@ -6,5 +6,6 @@
 #define shooSH_REDIR	4
 #define shooSH_NOP		8
 #define shooSH_FAIL		16
+#define shooSH_BG		32
 
 #endif

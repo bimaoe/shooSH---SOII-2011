@@ -34,6 +34,10 @@ void Process::setCommand(char** cmd, int size){
     cmdSize = size;
 }
 
+char** Process::getCommand (void) {
+	return command;
+}
+
 void Process::setFilename(std::string file, int flag){
 	if (flag == REDIN) {
 		filename[0] = file;

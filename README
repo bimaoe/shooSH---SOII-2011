@@ -10,4 +10,7 @@
 	-Decidimos tirar a execução do parser
 2011/10/17 Bianca
 	-shooSH ficará somente com as funcionalidades do terminal
-	-Criação de arquivo Job e Process
+	-Criação de arquivo Job e Processo
+2011/10/18 Bianca
+	-Piper e executor integrados à main
+	-Executor ainda com bug e falta integrar o Redirector

@@ -24,12 +24,11 @@ Parser::Parser (void) {
 	currState = PARSCMD;
 }
 
-Job* Parser::parseLine (int* out_flags) {
+Job* Parser::parseLine (void) {
 	job = new Job();
 	currState = PARSCMD;
 	int i, length, curr;
 	int rflag;
-	*out_flags = 0;
 
 	std::cin.getline (line, MAX_LENGTH);
 	std::cout << line << std::endl;
@@ -38,17 +37,17 @@ Job* Parser::parseLine (int* out_flags) {
 	length = strlen(line+i);
 	// check for blank line
 	if (length == 0) {
-		(*out_flags) |= shooSH_NOP;
-		delete job;
-		return NULL;
+		job->addFlag (shooSH_NOP);
+		return job;
 	} else {
+		while (line[--length] == ' '); // get trailing spaces
+		length++;
 		if (strcmp (line+i, "exit") == 0) {
-			*out_flags |= shooSH_EXIT;
-			delete job;
-			return NULL;
+			job->addFlag (shooSH_EXIT);
+			return job;
 		}
 	}
-	job->setCommand (std::string (line+i));
+	job->setCommand (std::string (line+i, length));
 	while (currState != PARSSUCCESS && currState != PARSFAIL) {
 		if (currState == PARSCMD) {
 			newProcess();
@@ -89,10 +88,15 @@ Job* Parser::parseLine (int* out_flags) {
 						break;
 					case '|':
 						i++;
-						*out_flags |= shooSH_PIPE;
+						job->addFlag (shooSH_PIPE);
 						endProcess();
 						currState = PARSCMD;
 						break;
+					case '&':
+						i++;
+						job->addFlag (shooSH_BG);
+						endProcess();
+						currState = PARSSUCCESS; //TODO: ainda nao trata cmd1 & cmd2
 					default:
 						currState = PARSPARAM;
 				}
@@ -155,7 +159,7 @@ Job* Parser::parseLine (int* out_flags) {
 			}
 		}
 	}
-	if (currState == PARSFAIL)	*out_flags |= shooSH_FAIL;
+	if (currState == PARSFAIL)	job->addFlag (shooSH_FAIL);
 	return job;
 }	
 

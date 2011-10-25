@@ -8,6 +8,8 @@
 #include <map>
 #include <cstring>
 #include <cstdlib>
+#include "Job.hpp"
+#include "Process.hpp"
 #include "shooSH.hpp"
 #include "Redirector.hpp"
 
@@ -56,7 +58,7 @@ public:
 	 *		else
 	 *			Pointer to job of parsed line (have to be deleted after using)
 	 */
-	Job* parseLine (int* out_flags);
+	Job* parseLine (void);
 };
 
 #endif
