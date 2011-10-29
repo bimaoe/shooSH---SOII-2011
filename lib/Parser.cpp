@@ -97,6 +97,7 @@ Job* Parser::parseLine (void) {
 						job->addFlag (shooSH_BG);
 						endProcess();
 						currState = PARSSUCCESS; //TODO: ainda nao trata cmd1 & cmd2
+						break;
 					default:
 						currState = PARSPARAM;
 				}
