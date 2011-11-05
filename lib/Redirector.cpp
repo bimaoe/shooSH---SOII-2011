@@ -6,23 +6,25 @@ Redirector::Redirector (void) {
 	flags[2] = O_RDWR|O_CREAT|O_APPEND;
 }
 
-void Redirector::init (char* filename[3], int flag){
-	if (flag & REDIN) {
-		fd[0] = open (filename[0], flags[0], 666); //TODO tirar essa coisa
+void Redirector::init (std::string filename[3], int flag[3]){
+	if (flag[0] == REDIN) {
+		fd[0] = open (filename[0].c_str(), flags[0], 666); //TODO tirar essa coisa
 		dup2 (fd[0], 0);
 	}
-	if (flag & REDOUTT) {
-		fd[1] = open (filename[1], flags[1], 666);
-		dup2 (fd[1], 1);
-	} else if (flag & REDOUTA) { // to prevent from opening twice
-		fd[1] = open (filename[1], flags[2], 666);
+	if (flag[1] == REDOUTT) {
+		fd[1] = open (filename[1].c_str(), flags[1], 666);
 		dup2 (fd[1], 1);
 	}
-	if (flag & REDERRT) {
-		fd[2] = open (filename[2], flags[1], 666);
+	if (flag[1] == REDOUTA) { 
+		fd[1] = open (filename[1].c_str(), flags[2], 666);
+		dup2 (fd[1], 1);
+	}
+	if (flag[2] == REDERRT) {
+		fd[2] = open (filename[2].c_str(), flags[1], 666);
 		dup2 (fd[2], 2);
-	} else if (flag & REDERRA) {
-		fd[2] = open (filename[2], flags[2], 666);
+	} 
+	if (flag[2] == REDERRA) {
+		fd[2] = open (filename[2].c_str(), flags[2], 666);
 		dup2 (fd[2], 2);
 	}
 }

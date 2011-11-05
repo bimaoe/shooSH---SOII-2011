@@ -24,11 +24,14 @@ class Process{
 	public:
 
 		Process(void);
-		void	destroy (void);
-		void    setCommand(char**, int);
-		void    setFilename(std::string, int);
-		void	print (void);
-		char**	getCommand (void);
+		void			destroy (void);
+		void			setCommand(char**, int);
+		void			setFilename(std::string, int);
+		void			print (void);
+		char**			getCommand (void);
+		bool			hasRedirection(void);
+		std::string*	getFilenames (void);
+		int*			getRedirFlags(void);
 };
 
 #endif

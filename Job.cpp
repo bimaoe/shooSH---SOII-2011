@@ -54,21 +54,21 @@ void Job::addFlag (int newflag) {
 }
 
 bool Job::inBg (void) {
-	return flag & shooSH_BG != 0;
+	return (flag & shooSH_BG) != 0;
 }
 
 bool Job::hasPipe (void) {
-	return flag & shooSH_PIPE != 0;
+	return (flag & shooSH_PIPE) != 0;
 }
 
 bool Job::isNop (void) {
-	return flag & shooSH_NOP != 0;
+	return (flag & shooSH_NOP) != 0;
 }
 
 bool Job::hasFailed (void) {
-	return flag & shooSH_FAIL != 0;
+	return (flag & shooSH_FAIL) != 0;
 }
 
 bool Job::hasExited (void) {
-	return flag & shooSH_EXIT != 0;
+	return (flag & shooSH_EXIT) != 0;
 }

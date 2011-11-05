@@ -6,10 +6,16 @@ TODO LIST
 	- Parser
 		+ Separar os comandos em matriz de strings
 		+ Pipe encadeado
-		- Pegar &
-	+ Colocar comandos em background
-		Usar waitpid()
-		Imediatamente volta o controle para o pai, mesmo executando o filho
+		+ Pegar &
+		- Checar se um comando existe
+	+ Executor
+		+ Executar job com pipe e redirecionamento
+			+ Pipe
+			+ Redirecionamento
+	- Colocar comandos em background
+		+Usar waitpid()
+		-Usar sinais pra saber quando um job em bg terminou
+		+Imediatamente volta o controle para o pai, mesmo executando o filho
 	- Tratamento de sinais 
 		(macros abaixo em wait)
 			WNOHANG -> REtorna se nenhum filho terminou 

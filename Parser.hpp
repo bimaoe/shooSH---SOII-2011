@@ -10,8 +10,8 @@
 #include <cstdlib>
 #include "Job.hpp"
 #include "Process.hpp"
-#include "shooSH.hpp"
 #include "Redirector.hpp"
+#include "shooSH.hpp"
 
 #define NUM_WORDS		100
 #define MAX_LENGTH		1024

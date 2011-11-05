@@ -14,3 +14,5 @@
 2011/10/18 Bianca
 	-Piper e executor integrados à main
 	-Executor ainda com bug e falta integrar o Redirector
+2011/10/28 Bianca
+	-Parser pega background

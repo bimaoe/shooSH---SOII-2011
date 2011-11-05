@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string>
 
 // types of redirection
 #define REDIN		1
@@ -22,7 +23,7 @@ class Redirector {
 		
 	public:
 		Redirector (void);
-		void init (char* filename[3], int flag);
+		void init (std::string filename[3], int flag[3]);
 		void end();
 };
 #endif

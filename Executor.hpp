@@ -27,7 +27,7 @@ public:
 	*/
 	
 	void execute (Job* job) {
-		pid_t pid;
+	 	pid_t pid;
 		int status;
 		pid = fork();
 		if (pid < 0)	throw -1;
@@ -36,9 +36,14 @@ public:
 				Piper piper;
 				piper.execPipe (job);
 			} else {
+				if (job->getProcess(0).hasRedirection()) {
+					Redirector r;
+					r.init (job->getProcess(0).getFilenames(), job->getProcess(0).getRedirFlags());
+				}
 				execvp(job->getProcess(0).getCommand()[0], job->getProcess(0).getCommand());
 			}
 		} else {
+			std::cout << job->inBg() << std::endl;
 			if (job->inBg()) waitpid(pid, &status, WNOHANG);
 			else {
 				waitpid(pid, &status, WUNTRACED);

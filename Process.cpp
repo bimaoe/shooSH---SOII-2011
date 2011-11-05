@@ -50,3 +50,15 @@ void Process::setFilename(std::string file, int flag){
 		redirflag[2] = flag;
 	}
 }
+
+bool Process::hasRedirection (void) {
+	return redirflag[0] != -1 || redirflag[1] != -1 || redirflag[2] != -1;
+}
+
+std::string* Process::getFilenames (void) {
+	return filename;
+}
+
+int* Process::getRedirFlags (void) {
+	return redirflag;
+}
