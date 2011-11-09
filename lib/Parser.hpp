@@ -11,7 +11,7 @@
 #include "Job.hpp"
 #include "Process.hpp"
 #include "Redirector.hpp"
-#include "shooSH.hpp"
+#include "shooSHlib.hpp"
 
 #define NUM_WORDS		100
 #define MAX_LENGTH		1024

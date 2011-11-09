@@ -1,7 +1,7 @@
 
 #compilacao do programa principal
 LIBS_DIR=./lib
-LIBS=-
+LIBS=-lRedirector -lJob -lParser -lProcess
 
 LFLAGS=-L$(LIBS_DIR) $(LIBS)
 

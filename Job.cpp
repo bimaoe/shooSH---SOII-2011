@@ -72,3 +72,11 @@ bool Job::hasFailed (void) {
 bool Job::hasExited (void) {
 	return (flag & shooSH_EXIT) != 0;
 }
+
+void Job::setPID (pid_t p) {
+	pid = p;
+}
+
+pid_t Job::getPID (void) {
+	return pid;
+}
