@@ -13,14 +13,15 @@ class Initializer{
 	private:	
 		pid_t pgid;
 		struct termios modes;	
+		
 	public:
 		Initializer();
 		void init();
-		
 };
 
 Initializer::Initializer(){
 }
+
 
 void Initializer::init(){
 	
@@ -37,10 +38,8 @@ void Initializer::init(){
 		/*Ignorando sinais*/
 		//signal (SIGINT, SIG_IGN);
 		signal (SIGQUIT, SIG_IGN);
-		signal (SIGTSTP, SIG_IGN);
 		signal (SIGTTIN, SIG_IGN);
 		signal (SIGTTOU, SIG_IGN);
-		signal (SIGCHLD, SIG_IGN);
 		
 		pgid = getpid();
 		if( setpgid(pgid, pgid) < 0){
