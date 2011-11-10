@@ -80,3 +80,15 @@ void Job::setPID (pid_t p) {
 pid_t Job::getPID (void) {
 	return pid;
 }
+
+void Job::setBG (bool isBG) {
+	flag |= (isBG & shooSH_BG);
+}
+
+void Job::setID (int jid) {
+	id = jid;
+}
+
+int Job::getID (void) {
+	return id;
+}

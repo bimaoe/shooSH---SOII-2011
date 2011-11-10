@@ -44,8 +44,8 @@ public:
 			}
 		} else {
 			std::cout << job->inBg() << std::endl;
-			if (job->inBg()) waitpid(pid, &status, WNOHANG);
-			else {
+			job->setPID(pid);
+			if (!job->inBg()) {
 				waitpid(pid, &status, WUNTRACED);
 				if (WIFEXITED(status))	std::cout << "Child " << pid << " terminated normally with return value " << WEXITSTATUS(status) << std::endl;
 				else if (WIFSIGNALED(status))	std::cout << "Child " << pid << " was terminated by signal " << WTERMSIG(status) << std::endl;

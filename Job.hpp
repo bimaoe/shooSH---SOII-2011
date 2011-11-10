@@ -16,18 +16,19 @@ class Job {
 
 	private:
 		std::vector<Process>	process;
-		pid_t 					pgid;
-		pid_t					pid;
+		pid_t 					pgid; /*group id*/
+		pid_t					pid; /*process id*/
 		char* 					info;
 		std::string 			cmd;
 		int						flag;
-
+		int 					id; /*internal id*/
 	public:
 
 		Job(void);
 		int			size(void);
 		void		destroy (void);
 		pid_t		getPID (void);
+		int			getID (void);
 		std::string	getCommand (void);
 		void 		setCommand (std::string command);
 		void		createProcess (void);
@@ -35,6 +36,8 @@ class Job {
 		void    	setProcessCommand (char**, int);
 		void    	setProcessFile (std::string, int);
 		void		setPID (pid_t);
+		void		setID (int);
+		void		setBG (bool);
 		void		print (void);
 		void		addFlag (int);
 		bool		inBg (void);

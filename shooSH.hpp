@@ -14,6 +14,7 @@
 std::list<Job*>			jobList;
 std::list<std::string>	history;
 struct sigaction sa_chld, sa_tstp, sa_cont;
+int currID;
 
 void shooSH_run();
 			
@@ -38,9 +39,60 @@ void hancont (int signum) {
  * Quando acontece alguma coisa com os childs
  */
 void hanchld (int signum, siginfo_t *siginfo, void* useless) {
+	int status;
 	fprintf (stderr, "Aconteceu algo com o child ");
 	fprintf (stderr, "%d pelo sinal %d com status %d\n", siginfo->si_pid, 
-			siginfo->si_signo, siginfo->si_status);
+			siginfo->si_code, siginfo->si_status);
+	if (siginfo->si_code == CLD_KILLED || siginfo->si_code == CLD_EXITED) {
+		printf ("yaaaaaaaaaaaaaay");
+		waitpid (siginfo->si_pid, &status, 0);
+	}
+}
+
+void changeDirectory (const char* dir) {
+	chdir (dir);
+}
+
+void showDirectoryName (void) {
+	char buf[256];
+	if (buf != getcwd(buf, 256))	throw -1; //buffer overflow
+	printf ("%s\n", buf);
+}
+
+void foreground (int id) {
+	std::list<Job*>::iterator curr, end;
+	int status;
+
+	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getID() != id; curr++);
+
+	if (curr == end) {
+		throw -id;
+	} else {
+		(*curr)->setBG(false);
+		kill ((*curr)->getPID(), SIGCONT); /*descobrir como se volta o processo para fg*/
+		printf ("haaaaaaaaaaaaaaaaaaaa %d\n", (*curr)->getPID());
+		waitpid ((*curr)->getPID(), &status, WUNTRACED);
+		if (WIFEXITED(status)) {
+			printf ("saiu com %d\n", WEXITSTATUS(status));
+		} else if (WIFSIGNALED(status)) {
+			printf ("foi terminado por um sinal %d\n", WTERMSIG(status));
+		} else if (WIFSTOPPED(status)) {
+			printf ("estava stopped ainda %d\n", WSTOPSIG(status));
+		} else if (WIFCONTINUED(status)) {
+			printf ("continuou\n");
+		}
+	}
+}
+
+void background (int id) {
+	std::list<Job*>::iterator curr, end;
+	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getID() != id; curr++);
+	if (curr == end) {
+		throw -id;
+	} else {
+		(*curr)->setBG(true);
+		kill ((*curr)->getPID(), SIGCONT);
+	}
 }
 
 		
@@ -62,6 +114,8 @@ void shooSH_init() {
 	sigaction (SIGCHLD, &sa_chld, NULL);
 	sigaction (SIGTSTP, &sa_tstp, NULL);
 	sigaction (SIGCONT, &sa_cont, NULL);
+
+	currID = 1;
 }
 
 
@@ -80,8 +134,14 @@ void shooSH_run (void) {
 		history.push_back (job->getCommand());
 		if (!(job->isNop()||job->hasExited())) {
 			job->print();
+			job->setID (currID++);
 			jobList.push_back (job);
-			executor.execute (job);
+			if (job->getCommand()[0] == 'f') {
+				foreground (1);		
+			} else {
+				tcsetpgrp (STDIN_FILENO, job->getPID());
+				executor.execute (job);
+			}
 		} else {
 			exited = job->hasExited();
 		}
