@@ -8,7 +8,7 @@ LFLAGS=-L$(LIBS_DIR) $(LIBS)
 SOURCES=$(wildcard *.cpp)
 LDYNAM=$(./lib/make)
 
-all: shooSH dynamics
+all: clean shooSH dynamics
 
 shooSH: $(SOURCES:.cpp=.o)
 	g++ -o $@ $^ $(LFLAGS)
@@ -22,7 +22,7 @@ dynamics:$(LDYNAM)
 	g++ $< -MM -MT '$*.o $*.d ' -MD	
 
 clean:
-	-rm -f *.o *~ shooSH 
+	@-rm -f *.o *~ shooSH 
 	
 remake:
 	$(MAKE) clean

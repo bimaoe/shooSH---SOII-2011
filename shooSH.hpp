@@ -11,36 +11,52 @@
 #include "Executor.hpp"
 #include "Initializer.hpp"
 
+std::list<Job*>			jobList;
+std::list<std::string>	history;
+struct sigaction sa_chld, sa_tstp, sa_cont;
 
-class shooSH {
-	private:
-		std::list<Job*>			jobList;
-		std::list<std::string>	history;
-		Initializer initializer;
-		struct sigaction sa_chld, sa_tstp, sa_cont;
+void shooSH_run();
+			
+/*
+ * Ctrl Z
+ */
+void hantstp (int signum, siginfo_t *siginfo, void* useless) {
 
-	public:
-		shooSH (void);
+	kill (jobList.back()->getPID(), SIGTSTP);
+	fprintf (stderr, "TSTP no filho %d\n", jobList.back()->getPID());
+}
+
+/*
+ * Resumo do processo parado
+ */
+void hancont (int signum) {
+
+	fprintf (stderr, "Filho voltando a ativa\n");
+}
+
+/*
+ * Quando acontece alguma coisa com os childs
+ */
+void hanchld (int signum, siginfo_t *siginfo, void* useless) {
+	fprintf (stderr, "Aconteceu algo com o child ");
+	fprintf (stderr, "%d pelo sinal %d com status %d\n", siginfo->si_pid, 
+			siginfo->si_signo, siginfo->si_status);
+}
+
 		
-		static void hanchld (int, siginfo_t*, void*);
-		static void hantstp (int);
-		static void hancont (int);
-	
-		void run();
-};
+void shooSH_init() { 
 
-shooSH::shooSH() { 
-
+	Initializer initializer;
 	initializer.init();	
 	
 	sa_chld.sa_sigaction = &hanchld;
 	sa_chld.sa_flags = SA_SIGINFO;
 	
-	sa_tstp.sa_handler = &hantstp;
-	sa_tstp.sa_flags = 0;
+	sa_tstp.sa_sigaction = &hantstp;
+	sa_tstp.sa_flags = SA_SIGINFO;
 
-	sa_tstp.sa_handler = &hancont;
-	sa_tstp.sa_flags = 0;
+	sa_cont.sa_handler = &hancont;
+	sa_cont.sa_flags = 0;
 
 	/*Tratamento decente de sinais*/
 	sigaction (SIGCHLD, &sa_chld, NULL);
@@ -48,37 +64,11 @@ shooSH::shooSH() {
 	sigaction (SIGCONT, &sa_cont, NULL);
 }
 
-/*
- * Ctrl Z
- */
-void shooSH::hantstp (int signum) {
-	
-	kill (jobList.back().getPID(), SIGTSTP);
-	printf ("Pai: shoosh filhinho '-'\n");
-}
-
-/*
- * Resumo do processo parado
- */
-void shooSH::hancont (int signum) {
-//	kill (pid, SIGTSTP);
-	printf ("Mae: diga filhinho ~ \n");
-}
-
-/*
- * Quando acontece alguma coisa com os childs
- */
-void shooSH::hanchld (int signum, siginfo_t *siginfo, void* useless) {
-	printf ("Mae: filhinhooo  TToTT\n");
-	printf ("%d %d com %d\n", siginfo->si_pid, siginfo->si_code, 
-								siginfo->si_status);
-}
-
 
 /**
  *	Executor da Shell
  */
-void shooSH::run (void) {
+void shooSH_run (void) {
 	Job* job;
 	Parser p;
 	Executor executor;
