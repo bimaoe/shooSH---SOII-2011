@@ -13,11 +13,12 @@ void Job::destroy(void) {
 
 void Job::print (void) {
 	int i, size;
-	std::cout << "Line: " <<  cmd << std::endl;
+	std::cout << '[' << id << "] " << cmd << std::endl;
+	/**std::cout << "Line: " <<  cmd << std::endl;
 	for (i = 0, size = process.size(); i < size; i++) {
 		printf ("p%d\n", i);
 		process[i].print();
-	}
+	}/**/
 }
 
 void Job::createProcess(void){
@@ -53,7 +54,7 @@ void Job::addFlag (int newflag) {
 	flag |= newflag;
 }
 
-bool Job::inBg (void) {
+bool Job::inBG(void) {
 	return (flag & shooSH_BG) != 0;
 }
 
@@ -91,4 +92,12 @@ void Job::setID (int jid) {
 
 int Job::getID (void) {
 	return id;
+}
+
+pid_t Job::getPGID (void) {
+	return pgid;
+}
+
+void Job::setPGID (pid_t gid) {
+	pgid = gid;
 }

@@ -28,6 +28,7 @@ class Job {
 		int			size(void);
 		void		destroy (void);
 		pid_t		getPID (void);
+		pid_t		getPGID (void);
 		int			getID (void);
 		std::string	getCommand (void);
 		void 		setCommand (std::string command);
@@ -36,11 +37,12 @@ class Job {
 		void    	setProcessCommand (char**, int);
 		void    	setProcessFile (std::string, int);
 		void		setPID (pid_t);
+		void		setPGID (pid_t);
 		void		setID (int);
 		void		setBG (bool);
 		void		print (void);
 		void		addFlag (int);
-		bool		inBg (void);
+		bool		inBG (void);
 		bool		hasPipe (void);
 		bool		hasExited (void);
 		bool		isNop (void);
