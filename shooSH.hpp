@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <list>
+#include <unistd.h>
 #include "Parser.hpp"
 #include "Redirector.hpp"
 #include "shooSH.hpp"
@@ -23,8 +24,11 @@ void shooSH_run();
  */
 void hantstp (int signum, siginfo_t *siginfo, void* useless) {
 
-	kill (jobList.back()->getPID(), SIGTSTP);
-	fprintf (stderr, "TSTP no filho %d\n", jobList.back()->getPID());
+	std::list <Job*>::iterator curr, end;
+
+	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->inBG(); curr++);
+	if (curr != end)	kill ((*curr)->getPID(), SIGTSTP);
+	fprintf (stderr, "TSTP no filho %d\n", (*curr)->getPID());
 }
 
 /*
@@ -39,13 +43,23 @@ void hancont (int signum) {
  * Quando acontece alguma coisa com os childs
  */
 void hanchld (int signum, siginfo_t *siginfo, void* useless) {
+	std::list<Job*>::iterator curr, end;
 	int status;
 	fprintf (stderr, "Aconteceu algo com o child ");
 	fprintf (stderr, "%d pelo sinal %d com status %d\n", siginfo->si_pid, 
 			siginfo->si_code, siginfo->si_status);
 	if (siginfo->si_code == CLD_KILLED || siginfo->si_code == CLD_EXITED) {
-		printf ("yaaaaaaaaaaaaaay");
+		for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getPID() != siginfo->si_pid; curr++);
+		if (curr != end)	(*curr)->destroy();
+		jobList.erase (curr);
 		waitpid (siginfo->si_pid, &status, 0);
+	}
+}
+
+void jobs (void) {
+	std::list<Job*>::iterator curr,end;
+	for (curr = jobList.begin(), end = jobList.end(); curr != end; curr++) {
+		(*curr)->print();
 	}
 }
 
@@ -70,8 +84,8 @@ void foreground (int id) {
 	} else {
 		(*curr)->setBG(false);
 		kill ((*curr)->getPID(), SIGCONT); /*descobrir como se volta o processo para fg*/
-		printf ("haaaaaaaaaaaaaaaaaaaa %d\n", (*curr)->getPID());
-		waitpid ((*curr)->getPID(), &status, WUNTRACED);
+		tcsetpgrp (STDIN_FILENO, (*curr)->getPID());
+		waitpid (-(*curr)->getPGID(), &status, WUNTRACED);
 		if (WIFEXITED(status)) {
 			printf ("saiu com %d\n", WEXITSTATUS(status));
 		} else if (WIFSIGNALED(status)) {

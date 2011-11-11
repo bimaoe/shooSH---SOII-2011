@@ -17,11 +17,15 @@ class Initializer{
 	public:
 		Initializer();
 		void init();
+		pid_t getPGID(void);
 };
 
 Initializer::Initializer(){
 }
 
+pid_t getPGID (void) {
+	return pgid;
+}
 
 void Initializer::init(){
 	

@@ -43,9 +43,9 @@ public:
 				execvp(job->getProcess(0).getCommand()[0], job->getProcess(0).getCommand());
 			}
 		} else {
-			std::cout << job->inBg() << std::endl;
+			std::cout << job->inBG() << std::endl;
 			job->setPID(pid);
-			if (!job->inBg()) {
+			if (!job->inBG()) {
 				waitpid(pid, &status, WUNTRACED);
 				if (WIFEXITED(status))	std::cout << "Child " << pid << " terminated normally with return value " << WEXITSTATUS(status) << std::endl;
 				else if (WIFSIGNALED(status))	std::cout << "Child " << pid << " was terminated by signal " << WTERMSIG(status) << std::endl;
