@@ -14,8 +14,9 @@
 
 std::list<Job*>			jobList;
 std::list<std::string>	history;
-struct sigaction sa_chld, sa_tstp, sa_cont;
+struct sigaction sa_chld, sa_tstp, sa_cont, sa_ttin, sa_ttou;
 int currID;
+Initializer initializer;
 
 void shooSH_run();
 			
@@ -56,6 +57,22 @@ void hanchld (int signum, siginfo_t *siginfo, void* useless) {
 	}
 }
 
+/*
+ *	TTIN
+ */
+void hanttin(int signum){
+	printf("TTIN\n");
+}
+
+
+/*
+ *	TTOU
+ */
+void hanttou (int signum){
+
+	printf("TTou\n");
+}
+
 void jobs (void) {
 	std::list<Job*>::iterator curr,end;
 	for (curr = jobList.begin(), end = jobList.end(); curr != end; curr++) {
@@ -83,9 +100,11 @@ void foreground (int id) {
 		throw -id;
 	} else {
 		(*curr)->setBG(false);
+		tcsetattr(STDIN_FILENO, TCSADRAIN, (*curr)->getTermios());
 		kill ((*curr)->getPID(), SIGCONT); /*descobrir como se volta o processo para fg*/
-		tcsetpgrp (STDIN_FILENO, (*curr)->getPID());
 		waitpid (-(*curr)->getPGID(), &status, WUNTRACED);
+		tcsetpgrp (STDIN_FILENO, (*curr)->getPID());
+
 		if (WIFEXITED(status)) {
 			printf ("saiu com %d\n", WEXITSTATUS(status));
 		} else if (WIFSIGNALED(status)) {
@@ -95,6 +114,9 @@ void foreground (int id) {
 		} else if (WIFCONTINUED(status)) {
 			printf ("continuou\n");
 		}
+
+		tcsetpgrp (STDIN_FILENO, initializer.getPGID());
+		tcsetattr (STDIN_FILENO, TCSADRAIN, initializer.getTermios());
 	}
 }
 
@@ -112,7 +134,6 @@ void background (int id) {
 		
 void shooSH_init() { 
 
-	Initializer initializer;
 	initializer.init();	
 	
 	sa_chld.sa_sigaction = &hanchld;
@@ -124,10 +145,18 @@ void shooSH_init() {
 	sa_cont.sa_handler = &hancont;
 	sa_cont.sa_flags = 0;
 
+	sa_ttin.sa_handler = &hanttin;
+	sa_ttin.sa_flags = 0;
+
+	sa_ttou.sa_handler = &hanttou;
+	sa_ttou.sa_flags = 0;
+
 	/*Tratamento decente de sinais*/
 	sigaction (SIGCHLD, &sa_chld, NULL);
 	sigaction (SIGTSTP, &sa_tstp, NULL);
 	sigaction (SIGCONT, &sa_cont, NULL);
+	sigaction (SIGTTIN, &sa_ttin, NULL);
+	sigaction (SIGTTOU, &sa_ttou, NULL);
 
 	currID = 1;
 }
@@ -153,7 +182,7 @@ void shooSH_run (void) {
 			if (job->getCommand()[0] == 'f') {
 				foreground (1);		
 			} else {
-				tcsetpgrp (STDIN_FILENO, job->getPID());
+				tcsetpgrp (STDIN_FILENO, job->getPGID());
 				executor.execute (job);
 			}
 		} else {

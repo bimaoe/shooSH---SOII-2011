@@ -4,6 +4,10 @@ Job::Job(void){
 	flag = 0;
 }
 
+struct termios *Job::getTermios(){
+	return &modes;
+}
+
 void Job::destroy(void) {
 	int i;
 	for (i = 0; i < process.size(); i++) {

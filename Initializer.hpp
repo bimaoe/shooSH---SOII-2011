@@ -18,13 +18,20 @@ class Initializer{
 		Initializer();
 		void init();
 		pid_t getPGID(void);
+		struct termios *getTermios();
+
 };
 
 Initializer::Initializer(){
 }
 
-pid_t getPGID (void) {
+pid_t Initializer::getPGID (void) {
 	return pgid;
+}
+
+struct termios *Initializer::getTermios(){
+
+	return &modes;
 }
 
 void Initializer::init(){
@@ -42,8 +49,6 @@ void Initializer::init(){
 		/*Ignorando sinais*/
 		//signal (SIGINT, SIG_IGN);
 		signal (SIGQUIT, SIG_IGN);
-		signal (SIGTTIN, SIG_IGN);
-		signal (SIGTTOU, SIG_IGN);
 		
 		pgid = getpid();
 		if( setpgid(pgid, pgid) < 0){

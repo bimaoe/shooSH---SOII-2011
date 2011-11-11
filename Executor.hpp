@@ -51,6 +51,7 @@ public:
 				else if (WIFSIGNALED(status))	std::cout << "Child " << pid << " was terminated by signal " << WTERMSIG(status) << std::endl;
 				else if (WIFSTOPPED(status))	std::cout << "Child " << pid << " was stopped by signal " << WSTOPSIG(status) << std::endl;
 			}
+			tcgetattr(STDIN_FILENO, job->getTermios());
 		}
 	}
 };
