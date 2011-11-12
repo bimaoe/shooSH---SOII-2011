@@ -4,13 +4,15 @@
 #include <cstdio>
 #include <list>
 #include <unistd.h>
+#include <errno.h>
+#include "Process.hpp"
 #include "Parser.hpp"
 #include "Redirector.hpp"
-#include "shooSH.hpp"
 #include "Job.hpp"
-#include "Process.hpp"
 #include "Executor.hpp"
 #include "Initializer.hpp"
+
+extern int errno;
 
 std::list<Job*>			jobList;
 std::list<std::string>	history;
@@ -28,8 +30,8 @@ void hantstp (int signum, siginfo_t *siginfo, void* useless) {
 	std::list <Job*>::iterator curr, end;
 
 	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->inBG(); curr++);
-	if (curr != end)	kill ((*curr)->getPID(), SIGTSTP);
-	fprintf (stderr, "TSTP no filho %d\n", (*curr)->getPID());
+	printf("TSTP no filho %d\n", (*curr)->getPGID());
+	if (curr != end)	kill (-(*curr)->getPGID(), SIGTSTP);
 }
 
 /*
@@ -39,6 +41,12 @@ void hancont (int signum) {
 
 	fprintf (stderr, "Filho voltando a ativa\n");
 }
+void jobs (void) {
+	std::list<Job*>::iterator curr,end;
+	for (curr = jobList.begin(), end = jobList.end(); curr != end; curr++) {
+		(*curr)->print();
+	}
+}
 
 /*
  * Quando acontece alguma coisa com os childs
@@ -46,22 +54,56 @@ void hancont (int signum) {
 void hanchld (int signum, siginfo_t *siginfo, void* useless) {
 	std::list<Job*>::iterator curr, end;
 	int status;
+	int err;
 	fprintf (stderr, "Aconteceu algo com o child ");
-	fprintf (stderr, "%d pelo sinal %d com status %d\n", siginfo->si_pid, 
+	fprintf (stderr, "%d pelo code %d com status %d\n", siginfo->si_pid, 
 			siginfo->si_code, siginfo->si_status);
+	// encontra o job se for o primeiro processo
+	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getPGID() != siginfo->si_pid; curr++);
+
 	if (siginfo->si_code == CLD_KILLED || siginfo->si_code == CLD_EXITED) {
-		for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getPID() != siginfo->si_pid; curr++);
-		if (curr != end)	(*curr)->destroy();
-		jobList.erase (curr);
-		waitpid (siginfo->si_pid, &status, 0);
+		printf ("killed ou exited");
+		if (curr != end) {
+			(*curr)->destroy();
+			jobList.erase (curr);
+		}
+		jobs();
+		// tratar processos defuntos
+
+//		if (waitpid (siginfo->si_pid, &status, 0) == -1) {
+//			err = errno;
+//			printf ("error: ");
+//			if (err == ECHILD)	printf ("process does not exist or is not my child\n");
+//			else if (err == EINTR)	printf ("SIGCHLD was caught\n");
+//			else	printf ("EINVAL\n");
+//		} else {
+			tcsetattr (STDIN_FILENO, TCSADRAIN, initializer.getTermios());
+			tcsetpgrp (STDIN_FILENO, initializer.getPGID());
+//		}
+	} else if (siginfo->si_code == CLD_STOPPED) {
+		printf ("entrou no stopped\n");
+	//	if (curr != end)
+	//		tcgetattr (STDIN_FILENO, (*curr)->getTermios()
+		if (waitpid (siginfo->si_pid, &status, WNOHANG) == -1) {
+			err = errno;
+			printf ("error: ");
+			if (err == ECHILD)	printf ("process does not exist or is not my child\n");
+			else if (err == EINTR)	printf ("SIGCHLD was caught\n");
+			else	printf ("EINVAL\n");
+		} else {
+			tcsetattr (STDIN_FILENO, TCSADRAIN, initializer.getTermios());
+			tcsetpgrp (STDIN_FILENO, initializer.getPGID());
+		}
 	}
+
 }
 
 /*
  *	TTIN
  */
-void hanttin(int signum){
-	printf("TTIN\n");
+void hanttin(int signum, siginfo_t *siginfo, void* useless){
+	printf("TTIN no %d %d\n", siginfo->si_pid, getpid());
+	exit(0);
 }
 
 
@@ -70,15 +112,9 @@ void hanttin(int signum){
  */
 void hanttou (int signum){
 
-	printf("TTou\n");
+	printf("TTou %d\n", getpid());
 }
 
-void jobs (void) {
-	std::list<Job*>::iterator curr,end;
-	for (curr = jobList.begin(), end = jobList.end(); curr != end; curr++) {
-		(*curr)->print();
-	}
-}
 
 void changeDirectory (const char* dir) {
 	chdir (dir);
@@ -93,6 +129,7 @@ void showDirectoryName (void) {
 void foreground (int id) {
 	std::list<Job*>::iterator curr, end;
 	int status;
+	int err;
 
 	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getID() != id; curr++);
 
@@ -101,22 +138,26 @@ void foreground (int id) {
 	} else {
 		(*curr)->setBG(false);
 		tcsetattr(STDIN_FILENO, TCSADRAIN, (*curr)->getTermios());
-		kill ((*curr)->getPID(), SIGCONT); /*descobrir como se volta o processo para fg*/
-		waitpid (-(*curr)->getPGID(), &status, WUNTRACED);
-		tcsetpgrp (STDIN_FILENO, (*curr)->getPID());
-
-		if (WIFEXITED(status)) {
-			printf ("saiu com %d\n", WEXITSTATUS(status));
-		} else if (WIFSIGNALED(status)) {
-			printf ("foi terminado por um sinal %d\n", WTERMSIG(status));
-		} else if (WIFSTOPPED(status)) {
-			printf ("estava stopped ainda %d\n", WSTOPSIG(status));
-		} else if (WIFCONTINUED(status)) {
-			printf ("continuou\n");
+		tcsetpgrp (STDIN_FILENO, (*curr)->getPGID());
+		printf ("aqui?\n");
+		kill (-(*curr)->getPGID(), SIGCONT); /*descobrir como se volta o processo para fg*/
+		if (waitpid ((*curr)->getProcess(0).getPID(), &status, WUNTRACED) == -1) {
+			err = errno;
+			printf ("error: ");
+			if (err == ECHILD)	printf ("process does not exist or is not my child\n");
+			else if (err == EINTR)	printf ("SIGCHLD was caught\n");
+			else	printf ("EINVAL\n");
+		} else {
+			if (WIFEXITED(status)) {
+				printf ("saiu com %d\n", WEXITSTATUS(status));
+			} else if (WIFSIGNALED(status)) {
+				printf ("foi terminado por um sinal %d\n", WTERMSIG(status)==SIGTSTP);
+			} else if (WIFSTOPPED(status)) {
+				printf ("estava stopped ainda %d\n", WSTOPSIG(status));
+			} else if (WIFCONTINUED(status)) {
+				printf ("continuou\n");
+			}
 		}
-
-		tcsetpgrp (STDIN_FILENO, initializer.getPGID());
-		tcsetattr (STDIN_FILENO, TCSADRAIN, initializer.getTermios());
 	}
 }
 
@@ -127,7 +168,7 @@ void background (int id) {
 		throw -id;
 	} else {
 		(*curr)->setBG(true);
-		kill ((*curr)->getPID(), SIGCONT);
+		kill (-(*curr)->getPGID(), SIGTSTP);
 	}
 }
 
@@ -145,8 +186,8 @@ void shooSH_init() {
 	sa_cont.sa_handler = &hancont;
 	sa_cont.sa_flags = 0;
 
-	sa_ttin.sa_handler = &hanttin;
-	sa_ttin.sa_flags = 0;
+	sa_ttin.sa_sigaction = &hanttin;
+	sa_ttin.sa_flags = SA_SIGINFO;
 
 	sa_ttou.sa_handler = &hanttou;
 	sa_ttou.sa_flags = 0;
@@ -158,7 +199,7 @@ void shooSH_init() {
 	sigaction (SIGTTIN, &sa_ttin, NULL);
 	sigaction (SIGTTOU, &sa_ttou, NULL);
 
-	currID = 1;
+	currID = 0;
 }
 
 
@@ -175,20 +216,24 @@ void shooSH_run (void) {
 		std::cout << "shooSH> ";
 		job = p.parseLine ();
 		history.push_back (job->getCommand());
+
 		if (!(job->isNop()||job->hasExited())) {
+			job->setID (++currID);
 			job->print();
-			job->setID (currID++);
 			jobList.push_back (job);
+
 			if (job->getCommand()[0] == 'f') {
-				foreground (1);		
+				foreground (currID-1);		
 			} else {
-				tcsetpgrp (STDIN_FILENO, job->getPGID());
 				executor.execute (job);
 			}
 		} else {
 			exited = job->hasExited();
 		}
 		job = NULL;
+		// retorna o controle para a shell
+		tcsetattr (STDIN_FILENO, TCSADRAIN, initializer.getTermios());
+		tcsetpgrp (STDIN_FILENO, initializer.getPGID());
 	}
 }
 

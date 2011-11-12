@@ -12,12 +12,15 @@ COMPILER=g++
 
 all: clean dynamics shooSH 
 
-shooSH: main.o
+shooSH: $(SOURCES:.cpp=.o)
 	export LD_LIBRARY_PATH=~/Documents/shooSH---SOII-2011/
-	g++ -o shooSH main.o $(LFLAGS)
+	g++ -o $@ $^ $(LFLAGS)
 
-main.o:main.cpp
+%.o:%.cpp
 	$(COMPILER) -c $< -o $@
+
+%.d:%.cpp
+	$(COMPILER) $< -MM -MT '$*.o $*.d ' -MD	
 
 	
 	

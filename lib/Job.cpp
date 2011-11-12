@@ -4,6 +4,10 @@ Job::Job(void){
 	flag = 0;
 }
 
+struct termios *Job::getTermios(){
+	return &modes;
+}
+
 void Job::destroy(void) {
 	int i;
 	for (i = 0; i < process.size(); i++) {
@@ -13,11 +17,12 @@ void Job::destroy(void) {
 
 void Job::print (void) {
 	int i, size;
-	std::cout << "Line: " <<  cmd << std::endl;
+	std::cout << '[' << id << "] " << cmd << std::endl;
+	/**/std::cout << "Line: " <<  cmd << std::endl;
 	for (i = 0, size = process.size(); i < size; i++) {
 		printf ("p%d\n", i);
 		process[i].print();
-	}
+	}/**/
 }
 
 void Job::createProcess(void){
@@ -53,7 +58,7 @@ void Job::addFlag (int newflag) {
 	flag |= newflag;
 }
 
-bool Job::inBg (void) {
+bool Job::inBG(void) {
 	return (flag & shooSH_BG) != 0;
 }
 
@@ -73,22 +78,23 @@ bool Job::hasExited (void) {
 	return (flag & shooSH_EXIT) != 0;
 }
 
-void Job::setPID (pid_t p) {
-	pid = p;
-}
-
-pid_t Job::getPID (void) {
-	return pid;
-}
-
 void Job::setBG (bool isBG) {
 	flag |= (isBG & shooSH_BG);
 }
 
 void Job::setID (int jid) {
 	id = jid;
+	printf ("id = %d\n", id);
 }
 
 int Job::getID (void) {
 	return id;
+}
+
+pid_t Job::getPGID (void) {
+	return pgid;
+}
+
+void Job::setPGID (pid_t gid) {
+	pgid = gid;
 }

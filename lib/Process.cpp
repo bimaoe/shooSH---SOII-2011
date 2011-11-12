@@ -62,3 +62,11 @@ std::string* Process::getFilenames (void) {
 int* Process::getRedirFlags (void) {
 	return redirflag;
 }
+
+void Process::setPID (pid_t p) {
+	pid = p;
+}
+
+pid_t Process::getPID (void) {
+	return pid;
+}

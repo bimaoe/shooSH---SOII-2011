@@ -10,6 +10,7 @@
 #include "Job.hpp"
 #include "Piper.hpp"
 
+
 class Executor {
 public:
 	Executor (void) {};
@@ -28,28 +29,44 @@ public:
 	
 	void execute (Job* job) {
 	 	pid_t pid;
-		int status;
+		int status, err;
 		pid = fork();
 		if (pid < 0)	throw -1;
-		else if (pid == 0) {
+		else if (pid == 0) { // executor
 			if (job->hasPipe()) {
 				Piper piper;
 				piper.execPipe (job);
 			} else {
+				pid = getpid();
+				job->setPGID(pid);
+				job->getProcess(0).setPID(pid);
+				if (!job->inBG())
+					tcsetpgrp (STDIN_FILENO, job->getPGID());
 				if (job->getProcess(0).hasRedirection()) {
 					Redirector r;
 					r.init (job->getProcess(0).getFilenames(), job->getProcess(0).getRedirFlags());
 				}
 				execvp(job->getProcess(0).getCommand()[0], job->getProcess(0).getCommand());
 			}
-		} else {
-			std::cout << job->inBG() << std::endl;
-			job->setPID(pid);
+		} else { // shell
 			if (!job->inBG()) {
-				waitpid(pid, &status, WUNTRACED);
-				if (WIFEXITED(status))	std::cout << "Child " << pid << " terminated normally with return value " << WEXITSTATUS(status) << std::endl;
-				else if (WIFSIGNALED(status))	std::cout << "Child " << pid << " was terminated by signal " << WTERMSIG(status) << std::endl;
-				else if (WIFSTOPPED(status))	std::cout << "Child " << pid << " was stopped by signal " << WSTOPSIG(status) << std::endl;
+				printf ("nao estah em bg. estou esperando %d\n", SIGTSTP);
+				if (waitpid(pid, &status, WUNTRACED) == -1){
+					printf ("error on wuntraced\n");
+//					err = errno;
+//					if (err == ECHILD)
+//						printf ("process does not exist or is not my child\n");
+//					else if (err == EINTR) 
+//						printf ("SIGCHLD was caught\n");
+//					else
+//						printf ("EINVAL\n");
+				} else {
+					if (WIFEXITED(status))	std::cout << "Child " << pid << " terminated normally with return value " << WEXITSTATUS(status) << std::endl;
+					else if (WIFSIGNALED(status))	std::cout << "Child " << pid << " was terminated by signal " << WTERMSIG(status) << std::endl;
+					else if (WIFSTOPPED(status))	std::cout << "Child " << pid << " was stopped by signal " << WSTOPSIG(status) << std::endl;
+				}
+			} else {
+				waitpid (pid, &status, WNOHANG);
 			}
 			tcgetattr(STDIN_FILENO, job->getTermios());
 		}

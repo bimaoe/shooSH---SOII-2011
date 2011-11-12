@@ -28,7 +28,7 @@ TODO LIST
 	- SIGNALS
 		man 7 signal	sig_ign sigttou
 		man tcsetpgrp
-	
+	+ Modificar Job para deixar somente o pgid. O pid tem que ser por processo. Para acordar um job, dar kill no pgid.
 	
 	-Fazer testes utilizando [ MALLOC_CHECK_=1 ] ou mais
 

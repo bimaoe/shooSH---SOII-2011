@@ -27,11 +27,13 @@ class Process{
 		void			destroy (void);
 		void			setCommand(char**, int);
 		void			setFilename(std::string, int);
+		void			setPID (pid_t);
 		void			print (void);
 		char**			getCommand (void);
 		bool			hasRedirection(void);
 		std::string*	getFilenames (void);
 		int*			getRedirFlags(void);
+		pid_t			getPID (void);
 };
 
 #endif

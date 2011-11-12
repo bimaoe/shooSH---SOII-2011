@@ -29,7 +29,11 @@ Job* Parser::parseLine (void) {
 	currState = PARSCMD;
 	int i, length, curr;
 	int rflag;
-
+	
+	//clear the string and the cin buffer to avoid infinite loop
+	strcpy(line, "\0");
+	std::cin.clear();
+	
 	std::cin.getline (line, MAX_LENGTH);
 	std::cout << line << std::endl;
 	i = 0;
