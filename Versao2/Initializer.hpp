@@ -12,26 +12,26 @@ std::list<Job*>			jobList;
 struct termios			shooSHTermios;
 pid_t					shooSHPGID;
 
-struct sigaction sa_chld, sa_ttin, sa_ttou, sa_tstp;
+struct sigaction sa_chld, sa_ttin, sa_ttou;
 
 /*
  * Handler para sinais de processos filhos
  */
-void hanchld (int signum, siginfo_t *siginfo, void* useless) {
+void hanchld (int signum, siginfo_t *siginfo, void* context) {
 
 	std::list<Job*>::iterator curr, end;
 	int status;
 	int err;
-	fprintf (stderr, "hanchld - Filho %d ", siginfo->si_pid);
-	fprintf (stderr, "com code %d com status %d\n",
-						siginfo->si_code, siginfo->si_status);
+	//fprintf (stderr, "hanchld - Filho %d ", siginfo->si_pid);
+	//fprintf (stderr, "com code %d com status %d\n",
+	//					siginfo->si_code, siginfo->si_status);
 	//TODO mudar esse comentario e lembrar o que isso faz
 	// encontra o job se for o primeiro processo
 	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getPGID() != siginfo->si_pid; curr++);
 
 	if (siginfo->si_code == CLD_KILLED || siginfo->si_code == CLD_EXITED) {
 		if (curr != end) {
-			fprintf (stderr, "Done\n");
+			std::cout << "Finalizando\n\t";
 			(*curr)->print();
 			(*curr)->destroy();
 			jobList.erase (curr);
@@ -39,17 +39,28 @@ void hanchld (int signum, siginfo_t *siginfo, void* useless) {
 		tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 		tcsetpgrp (STDIN_FILENO, shooSHPGID);
 	} else if (siginfo->si_code == CLD_STOPPED) {
-		if (curr != end)
+		if (curr != end) {
 			tcgetattr (STDIN_FILENO, (*curr)->getTermios());
-		tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
-		tcsetpgrp (STDIN_FILENO, shooSHPGID);
+			
+			tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
+			tcsetpgrp (STDIN_FILENO, shooSHPGID);
+
+			(*curr)->stop();
+			(*curr)->print();
+		} else {
+			tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
+			tcsetpgrp (STDIN_FILENO, shooSHPGID);
+		}
+	} else if (siginfo->si_code == CLD_CONTINUED) {
+		(*curr)->cont();
+		(*curr)->print();
 	}
 }
 
 /*
  *	TTIN
  */
-void hanttin(int signum, siginfo_t *siginfo, void* useless){
+void hanttin(int signum, siginfo_t *siginfo, void* context){
 
 	fprintf(stderr, "TTIN no processo %d\n", getpid());
 	exit(0);
@@ -100,7 +111,7 @@ void Initializer::init(){
 		sigaddset (&(sa_chld.sa_mask), SIGTTIN);
 		sigaddset (&(sa_chld.sa_mask), SIGTTOU);
 		sigaddset (&(sa_chld.sa_mask), SIGCHLD);
-//		sigaddset (&(sa_chld.sa_mask), SIGCONT);
+		sigaddset (&(sa_chld.sa_mask), SIGCONT);
 		sigaddset (&(sa_chld.sa_mask), SIGTSTP);
 
 		sa_ttin.sa_sigaction = &hanttin;
@@ -108,6 +119,7 @@ void Initializer::init(){
 
 		sa_ttou.sa_handler = &hanttou;
 		sa_ttou.sa_flags = 0;
+
 
 		/*Tratamento decente de sinais*/
 		sigaction (SIGCHLD, &sa_chld, NULL);

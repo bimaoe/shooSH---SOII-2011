@@ -107,8 +107,11 @@ Job* Parser::parseLine (void) {
 			return job;
 		}
 	}
-	job->setCommand (std::string (line+i, length));
-	
+	if ((line+i)[length-1] == '&')
+		job->setCommand (std::string (line+i, length-1));
+	else
+		job->setCommand (std::string (line+i, length));
+		
 	while (currState != PARSSUCCESS && currState != PARSFAIL) {
 		if (currState == PARSCMD) {
 			newProcess();
@@ -216,15 +219,15 @@ Job* Parser::parseLine (void) {
 			else {
 				curr = 0;
 				if (line[i] == '"') { // get filenames like "file name"
-					filename[curr++] = line[i++];
+					i++;
 					while (i < length && line[i] != '"')	filename[curr++] = line[i++];
 					if (i == length)	currState = PARSFAIL;
-					else	filename[curr++] = line[i++];
+					else	i++;
 				} else if (line[i] == '\'') { // get filenames like 'file name'
-					filename[curr++] = line[i++];
+					i++;
 					while (i < length && line[i] != '\'')	filename[curr++] = line[i++];
 					if (i == length)	currState = PARSFAIL;
-					else	filename[curr++] = line[i++];
+					else	i++;
 				} else {
 					while (i < length && line[i] != ' ')	filename[curr++] = line[i++];
 				}

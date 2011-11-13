@@ -45,7 +45,7 @@ public:
 			signal (SIGTTOU, SIG_DFL);
 			signal (SIGCHLD, SIG_DFL);
 			
-			fprintf (stderr, "Executando %d\n", getpid());
+//			fprintf (stderr, "Executando %d\n", getpid());
 			job->setPGID(getpid());
 			setpgid (getpid(), getpid());
 			
@@ -83,15 +83,14 @@ public:
 				if (w == -1) {
 					fprintf (stderr, "Erro: Executor: ");
 					if (err == ECHILD)	fprintf (stderr, "processo (%d) nao existe ou nao eh meu filho\n", pid);
-					else if (err == EINTR)	fprintf (stderr, "SIGCHLD provavelmente ferrou tudo\n");
 					else	fprintf (stderr, "EINVAL\n");
 				} else {
 					tcgetattr(STDIN_FILENO, job->getTermios());
 					tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 					tcsetpgrp (STDIN_FILENO, shooSHPGID);
-					if (WIFEXITED(status))	std::cout << "Filho " << pid << " morreu em paz " << WEXITSTATUS(status) << std::endl;
+					/*if (WIFEXITED(status))	std::cout << "Filho " << pid << " saiu com status " << WEXITSTATUS(status) << std::endl;
 					else if (WIFSIGNALED(status))	std::cout << "Filho " << pid << " recebeu sinal " << WTERMSIG(status) << std::endl;
-					else if (WIFSTOPPED(status))	std::cout << "Filho " << pid << " foi parado com sinal " << WSTOPSIG(status) << std::endl;
+					else if (WIFSTOPPED(status))	std::cout << "Filho " << pid << " foi parado por sinal " << WSTOPSIG(status) << std::endl;*/
 				}
 			} else
 				tcgetattr(STDIN_FILENO, job->getTermios()); // Pega os atributos do job

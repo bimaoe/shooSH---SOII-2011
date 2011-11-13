@@ -89,7 +89,7 @@ void foreground (int id) {
 			tcsetattr(STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 			tcsetpgrp (STDIN_FILENO, shooSHPGID);
 			
-			if (WIFEXITED(status)) {
+			/*if (WIFEXITED(status)) {
 				fprintf (stderr, "Filho %d saiu com %d\n", pid, WEXITSTATUS(status));
 			} else if (WIFSIGNALED(status)) {
 				fprintf (stderr, "Filho %d foi terminado por um sinal %d\n", (*curr)->getPGID(),  WTERMSIG(status)==SIGTSTP);
@@ -97,7 +97,7 @@ void foreground (int id) {
 				fprintf (stderr, "Filho %d estava stopped ainda %d\n", (*curr)->getPGID(), WSTOPSIG(status));
 			} else if (WIFCONTINUED(status)) {
 				fprintf (stderr, "Filho %d continuou\n", (*curr)->getPGID());
-			}
+			}*/
 		}
 	}
 }

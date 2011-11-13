@@ -61,6 +61,7 @@ class Job {
 
 Job::Job(void){
 	flag = 0;
+	stopped = false;
 }
 
 struct termios *Job::getTermios(){
@@ -90,7 +91,13 @@ void Job::destroy(void) {
 
 void Job::print (void) {
 	int i, size;
-	std::cout << '[' << id << "]\t" << cmd << std::endl;
+	std::cout << '[' << id << "]\t";
+	if (stopped)
+		std::cout << "Parado";
+	else
+		std::cout << "Ativo";
+	std::cout <<  "\t\t" << cmd << ' ' << (inBG()?'&':' ');
+	std::cout << std::endl;
 	/**std::cout << "Line: " <<  cmd << std::endl;
 	for (i = 0, size = process.size(); i < size; i++) {
 		printf ("p%d\n", i);
@@ -155,7 +162,10 @@ bool Job::hasExited (void) {
 }
 
 void Job::setBG (bool isBG) {
-	flag |= (isBG & shooSH_BG);
+	if (isBG)
+		flag |= (-1 & shooSH_BG);
+	else
+		flag &= (0 & shooSH_BG);
 }
 
 void Job::setID (int jid) {

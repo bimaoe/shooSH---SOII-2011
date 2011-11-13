@@ -23,6 +23,14 @@ void shooSH_init() {
 }
 
 
+void shooSH_clean(void) {
+	std::list<Job*>::iterator curr, end;
+	for (curr =jobList.begin(), end = jobList.end(); curr != end; curr++) {
+		(*curr)->destroy();
+	}
+	jobList.clear();
+}
+
 /**
  *	Executor da Shell
  */
@@ -57,6 +65,7 @@ void shooSH_run (void) {
 		}
 		job = NULL;
 	}
+	shooSH_clean();
 }
 
 #endif
