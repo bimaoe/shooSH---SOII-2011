@@ -1,0 +1,47 @@
+UNIVERSIDADE DE SAO PAULO
+INSTITUTO DE CIENCIAS MATEMATICAS E COMPUTACAO
+PROJETO DE SISTEMAS OPERACIONAIS II - SSC 0141
+IMPLEMENTACAO DE UM SHELL
+
+RESPONSAVEL: MARCELO HONORATO MARLETA
+ALUNOS: BIANCA OE 6810554, RAFAEL NAKANISHI 6793198
+
+INTRODUCAO
+	+ O projeto foi desenvolvido nas linguagens C/C++
+
+	+ Foram desenvolvidas classes para as estruturas Job e Process
+	  	Process representa um processo. Armazena as seguintes informacoes:
+			PID - ID do processo
+			Comando a ser executado
+			Nome dos arquivos de redirecionamento (se houver)
+		Job e um conjunto de processos que devem ser executados em pipe.
+			Armazena as seguintes informacoes:
+			PGID - ID do grupo de processos. Coincide com o PID do primeiro
+			  processo do conjunto
+			ID para controle interno
+			Flags de status
+
+	+ O shell desenvolvido e constituido basicamente de:
+		Parser
+			Responsavel por ler e analisar uma linha de comando, e inicializar um Job com esses dados.
+		Executor
+			Responsavel por executar um Job.
+		shooSH
+			Shell propriamente dita. E responsavel por chamar as outras classes e executar os comandos integrados.
+
+IMPLEMENTACAO
+	+ No total foram criados 
+
+	+ Todos os comandos integrados pedidos foram implementados
+		Chamadas:
+			jobs
+			exit
+			kill %job
+			fg %job
+			bg %job
+			echo args1 arg2 ... argn
+			pwd
+			cd path
+	+ 
+COMENTARIOS
+	+

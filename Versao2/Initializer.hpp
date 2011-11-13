@@ -31,20 +31,24 @@ void hanchld (int signum, siginfo_t *siginfo, void* context) {
 
 	if (siginfo->si_code == CLD_KILLED || siginfo->si_code == CLD_EXITED) {
 		if (curr != end) {
-			std::cout << "Finalizando\n\t";
+//			std::cout << "Finalizando\n\t";
 			(*curr)->print();
 			(*curr)->destroy();
 			jobList.erase (curr);
+			if (!(*curr)->inBG()) {
+				tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
+				tcsetpgrp (STDIN_FILENO, shooSHPGID);
+			}
 		}
-		tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
-		tcsetpgrp (STDIN_FILENO, shooSHPGID);
+		
 	} else if (siginfo->si_code == CLD_STOPPED) {
 		if (curr != end) {
 			tcgetattr (STDIN_FILENO, (*curr)->getTermios());
-			
-			tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
-			tcsetpgrp (STDIN_FILENO, shooSHPGID);
-
+			if (!(*curr)->inBG()) {
+				tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
+				tcsetpgrp (STDIN_FILENO, shooSHPGID);
+			}
+//			std::cout << "Parando\n\t";
 			(*curr)->stop();
 			(*curr)->print();
 		} else {
@@ -52,6 +56,7 @@ void hanchld (int signum, siginfo_t *siginfo, void* context) {
 			tcsetpgrp (STDIN_FILENO, shooSHPGID);
 		}
 	} else if (siginfo->si_code == CLD_CONTINUED) {
+//		std::cout << "Continuando\n\t";
 		(*curr)->cont();
 		(*curr)->print();
 	}

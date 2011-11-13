@@ -102,23 +102,22 @@ void foreground (int id) {
 		throw -id;
 	} else {
 		(*curr)->setBG(false);
-		
+		(*curr)->print();
 		tcsetattr(STDIN_FILENO, TCSADRAIN, (*curr)->getTermios());
 		tcsetpgrp (STDIN_FILENO, (*curr)->getPGID());
 		
 		kill (-(*curr)->getPGID(), SIGCONT); /*TODO descobrir como se volta o processo para fg*/
-		while ((pid = waitpid (WAIT_ANY, &status, WUNTRACED)) == -1 && (err = errno) == EINTR);
+		while ((pid = waitpid ((*curr)->getPGID(), &status, WUNTRACED)) == -1 && (err = errno) == EINTR);
 		if (pid == -1) {
 			fprintf (stderr, "Erro: fg: ");
 			if (err == ECHILD)	fprintf (stderr, "processo (%d) nao existe ou nao eh meu filho\n", (*curr)->getPGID());
-			else if (err == EINTR)	fprintf (stderr, "SIGCHLD provavelmente ferrou tudo\n");
 			else	fprintf (stderr, "EINVAL\n");
 		} else {
 			tcgetattr (STDIN_FILENO, (*curr)->getTermios());
 			tcsetattr(STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 			tcsetpgrp (STDIN_FILENO, shooSHPGID);
 			
-			/*if (WIFEXITED(status)) {
+			/**if (WIFEXITED(status)) {
 				fprintf (stderr, "Filho %d saiu com %d\n", pid, WEXITSTATUS(status));
 			} else if (WIFSIGNALED(status)) {
 				fprintf (stderr, "Filho %d foi terminado por um sinal %d\n", (*curr)->getPGID(),  WTERMSIG(status)==SIGTSTP);
@@ -126,7 +125,7 @@ void foreground (int id) {
 				fprintf (stderr, "Filho %d estava stopped ainda %d\n", (*curr)->getPGID(), WSTOPSIG(status));
 			} else if (WIFCONTINUED(status)) {
 				fprintf (stderr, "Filho %d continuou\n", (*curr)->getPGID());
-			}*/
+			}/**/
 		}
 	}
 }

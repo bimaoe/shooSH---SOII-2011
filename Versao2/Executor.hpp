@@ -35,7 +35,6 @@ public:
 		
 		if (pid < 0)	throw -1;
 		else if (pid == 0) { // o filho executa o processo
-			//TODO setar atributos(?)
 			if (!job->inBG()) //se for foreground
 				tcsetpgrp (STDIN_FILENO, job->getPGID()); //vira o dono do terminal
 			signal (SIGINT, SIG_DFL);
@@ -68,17 +67,13 @@ public:
 				exit (0);
 			}
 		} else { // shell
+			std::cout << '[' << job->getID() << "]\t" << pid << std::endl;
 			job->getProcess(0)->setPID(pid);
 			job->setPGID(pid);
 			setpgid (pid, pid);
 			if (!job->inBG()) {
 				tcsetpgrp (STDIN_FILENO, pid);
-				/*signal (SIGINT, SIG_DFL);
-				signal (SIGQUIT, SIG_DFL);
-				signal (SIGTSTP, SIG_DFL);
-				signal (SIGTTIN, SIG_DFL);
-				signal (SIGTTOU, SIG_DFLexit);
-				signal (SIGCHLD, SIG_DFL);*/
+				
 				while ((w = waitpid(pid, &status, WUNTRACED)) == -1 && (err = errno) == EINTR);
 				if (w == -1) {
 					fprintf (stderr, "Erro: Executor: ");
@@ -88,9 +83,9 @@ public:
 					tcgetattr(STDIN_FILENO, job->getTermios());
 					tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 					tcsetpgrp (STDIN_FILENO, shooSHPGID);
-					/*if (WIFEXITED(status))	std::cout << "Filho " << pid << " saiu com status " << WEXITSTATUS(status) << std::endl;
+					/**if (WIFEXITED(status))	std::cout << "Filho " << pid << " saiu com status " << WEXITSTATUS(status) << std::endl;
 					else if (WIFSIGNALED(status))	std::cout << "Filho " << pid << " recebeu sinal " << WTERMSIG(status) << std::endl;
-					else if (WIFSTOPPED(status))	std::cout << "Filho " << pid << " foi parado por sinal " << WSTOPSIG(status) << std::endl;*/
+					else if (WIFSTOPPED(status))	std::cout << "Filho " << pid << " foi parado por sinal " << WSTOPSIG(status) << std::endl;/**/
 				}
 			} else
 				tcgetattr(STDIN_FILENO, job->getTermios()); // Pega os atributos do job

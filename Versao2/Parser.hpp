@@ -168,10 +168,21 @@ Job* Parser::parseLine (void) {
 			}
 		} else if (currState == PARSPARAM) {
 			newWord();
-			while (i < length && line[i] != ' ' && line[i] != '\"')	cmdList[cmdListSize][currChar++] = line[i++];
+			while (i < length && line[i] != ' ' && line[i] != '\"' && line[i] != '\'')	cmdList[cmdListSize][currChar++] = line[i++];
 			if (line[i] == '\"') {
 				i++;
 				while (i < length && line[i] != '\"')	cmdList[cmdListSize][currChar++] = line[i++];
+				if (i == length) {
+					endWord();
+					currState = PARSFAIL;
+				} else {
+					i++;
+					endWord();
+					currState = PARSNEXT;
+				}
+			} else if (line[i] == '\'') {
+				i++;
+				while (i < length && line[i] != '\'')	cmdList[cmdListSize][currChar++] = line[i++];
 				if (i == length) {
 					endWord();
 					currState = PARSFAIL;
