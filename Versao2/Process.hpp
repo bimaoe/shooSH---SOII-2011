@@ -1,0 +1,128 @@
+#ifndef PROCESS_H
+#define PROCESS_H
+
+#include <string>
+#include <unistd.h>
+#include <cstdio>
+#include <cstdlib>
+#include <vector>
+#include <iostream>
+#include "Redirector.hpp"
+
+class Process{
+
+	private:
+		char**		command;
+		int     	cmdSize; //tamanho da matriz de comandos
+		pid_t   	pid;
+		int     	status;
+		std::string	filename[3]; //nome dos arquivos de redirecionamento
+		int     	redirflag[3]; //flag de redirecionamento
+
+	public:
+
+		Process(void);
+		/*
+		 *	Desaloca a matriz de comandos
+		 */
+		void			destroy (void);
+		
+		bool			hasRedirection(void);
+		void			setCommand(char**, int);
+		void			setFilename(std::string, int);
+		void			setPID (pid_t);
+		
+		char**			getCommand (void);
+		std::string*	getFilenames (void);
+		pid_t			getPID (void);
+		int*			getRedirFlags(void);
+		int				size (void);
+		
+		void			print (void);
+};
+
+Process::Process() {
+
+	command = NULL;
+	cmdSize = 0;
+	redirflag[0] = redirflag[1] = redirflag[2] = -1;
+}
+
+void Process::print(void) {
+
+	int i;
+	printf ("Comandos:\n");
+	for (i = 0; i < cmdSize; i++) {
+		printf ("%s\n", command[i]);
+	}
+	printf ("Redirecionamento:\n");
+	for (i = 0; i < 3; i++)
+		if (redirflag[i] != -1)	std::cout << i << " " << filename[i] << std::endl;
+}
+
+void Process::destroy(void) {
+
+	if (command != NULL) {
+		for(int i=0; i<cmdSize; i++){
+			free(command[i]);
+		}
+		free(command);
+	}
+	command = NULL;
+	cmdSize = 0;
+}
+
+void Process::setCommand(char** cmd, int size){
+
+    command = cmd;
+    cmdSize = size;
+}
+
+char** Process::getCommand (void) {
+
+	return command;
+}
+
+void Process::setFilename(std::string file, int flag){
+
+	if (flag == REDIN) {
+		filename[0] = file;
+		redirflag[0] = flag;
+	} else if (flag == REDOUTT || flag == REDOUTA) {
+		filename[1] = file;
+		redirflag[1] = flag;
+	} else if (flag == REDERRT || flag == REDERRA) {
+		filename[2] = file;
+		redirflag[2] = flag;
+	}
+}
+
+bool Process::hasRedirection (void) {
+
+	return redirflag[0] != -1 || redirflag[1] != -1 || redirflag[2] != -1;
+}
+
+std::string* Process::getFilenames (void) {
+
+	return filename;
+}
+
+int* Process::getRedirFlags (void) {
+
+	return redirflag;
+}
+
+void Process::setPID (pid_t p) {
+
+	pid = p;
+}
+
+pid_t Process::getPID (void) {
+
+	return pid;
+}
+
+int Process::size (void) {
+	return cmdSize;
+}
+#endif
