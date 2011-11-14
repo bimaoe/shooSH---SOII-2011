@@ -12,32 +12,40 @@
 #include "Process.hpp"
 #include "shooSHlib.hpp"
 
-
+/*!
+ *	\brief Classe de Job
+ */
 class Job {
 
 	private:
-		std::vector<Process*>	process; //vetor de ponteiros dos processos do job
-		pid_t 					pgid; //group id
-		char* 					info; //nao usado
-		std::string 			cmd; //linha de comando
-		int						flag; //flag de bg, pipe, exit, nop
-		int 					id; //internal id
-		struct termios 			modes; //atributos
-		bool					stopped;
+		std::vector<Process*>	process; //!< Vetor de ponteiros dos processos do job.
+		pid_t 					pgid; //!< Group ID do Job.
+		std::string 			cmd; //!< Linha de comando.
+		int						flag; //!< Flag de bg, pipe, exit, nop.
+		int 					id; //!< ID interno.
+		struct termios 			modes; //!< Atributos.
+		bool					stopped; //!< Flag de parado.
 
 	public:
 		Job(void);
+		/*!
+		 *	\brief Cria um processo e o insere no vetor de processos.
+		 */
 		void			createProcess (void);
-		/*
-		 *	Desaloca todos os recursos
+		/*!
+		 *	\brief Desaloca todos os recursos.
 		 */
 		void			destroy (void);
-
+		
 		std::string		getCommand (void);
 		int				getID (void);
 		pid_t			getPGID (void);
+		/*!
+		 *	\brief Retorna um processo do vetor de processos.
+		 *	\param i Indice do processo no vetor.
+		 */
 		Process*		getProcess (int i);
-		struct termios*	getTermios();
+		struct termios*	getTermios(void);
 		bool			hasPipe (void);
 		bool			hasExited (void);
 		bool			hasFailed (void);
@@ -52,8 +60,19 @@ class Job {
 		void			setCommand (std::string command);
 		void			setID (int);
 		void			setPGID (pid_t);
-		void			setProcessCommand (char**, int);
-		void			setProcessFile (std::string, int);
+		/*!
+		 *	\brief Seta o comando do ultimo processo inserido.
+		 *	\param command Matriz de caracteres cuja ultima linha deve ser (char*)NULL.
+		 *	\param size Numero de linhas da matriz sem contar a nula.
+		 */
+		void			setProcessCommand (char** command, int size);
+		/*!
+		 *	\brief Seta o nome do arquivo relacionado a um tipo de redirecionamento.
+		 *	\param filename Nome do arquivo.
+		 *	\param flag Flag indicando o tipo de redirecionamento
+		 */
+		
+		void			setProcessFile (std::string filename, int flag);
 		void			stop (void);
 
 		void			print (void);
@@ -98,11 +117,6 @@ void Job::print (void) {
 		std::cout << "Ativo";
 	std::cout <<  "\t\t" << cmd << ' ' << (inBG()?'&':' ');
 	std::cout << std::endl;
-	/**std::cout << "Line: " <<  cmd << std::endl;
-	for (i = 0, size = process.size(); i < size; i++) {
-		printf ("p%d\n", i);
-		process[i]->print();
-	}/**/
 }
 
 void Job::createProcess(void){
@@ -125,10 +139,6 @@ int Job::size (void) {
 	return process.size();
 }
 
-/*
- *	cmd = matriz de comandos terminada em NULL
- *	size = numero de posicoes da matriz usada sem contar o NULL
- */
 void Job::setProcessCommand(char** cmd, int size){
     process[process.size()-1]->setCommand(cmd, size);
 }

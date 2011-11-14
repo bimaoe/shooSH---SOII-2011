@@ -7,13 +7,16 @@
 #include <fcntl.h>
 #include <string>
 
-// tipos de redirecionamento
+//!< Definicoes de flags de redirecionamento
 #define REDIN		1
 #define REDOUTT		2
 #define REDOUTA		4
 #define REDERRT		8
 #define REDERRA		16
 
+/*!
+ *	Classe com funcoes de redirecionamento
+ */
 class Redirector {
 	private:
 		int flags[3];
@@ -23,8 +26,16 @@ class Redirector {
 		
 	public:
 		Redirector (void);
+		/*!
+		 *	\brief Abre os arquivos necessarios e duplica descritores.
+		 *	\param filename Nomes dos arquivos.
+		 *	\param flag Flags indicando os tipos de redirecionamento
+		 */
 		void init (std::string filename[3], int flag[3]);
-		void end();
+		/*!
+		 *	\brief Fecha os descritores de arquivos
+		 */
+		void end (void);
 };
 
 Redirector::Redirector (void) {
@@ -36,23 +47,23 @@ Redirector::Redirector (void) {
 
 void Redirector::init (std::string filename[3], int flag[3]){
 	if (flag[0] == REDIN) {
-		fd[0] = open (filename[0].c_str(), flags[0], 777);
+		fd[0] = open (filename[0].c_str(), flags[0], S_IRWXU | S_IRWXG | S_IRWXO);
 		dup2 (fd[0], 0);
 	}
 	if (flag[1] == REDOUTT) {
-		fd[1] = open (filename[1].c_str(), flags[1], 777);
+		fd[1] = open (filename[1].c_str(), flags[1], S_IRWXU | S_IRWXG | S_IRWXO);
 		dup2 (fd[1], 1);
 	}
 	if (flag[1] == REDOUTA) { 
-		fd[1] = open (filename[1].c_str(), flags[2], 777);
+		fd[1] = open (filename[1].c_str(), flags[2], S_IRWXU | S_IRWXG | S_IRWXO);
 		dup2 (fd[1], 1);
 	}
 	if (flag[2] == REDERRT) {
-		fd[2] = open (filename[2].c_str(), flags[1], 777);
+		fd[2] = open (filename[2].c_str(), flags[1], S_IRWXU | S_IRWXG | S_IRWXO);
 		dup2 (fd[2], 2);
 	} 
 	if (flag[2] == REDERRA) {
-		fd[2] = open (filename[2].c_str(), flags[2], 777);
+		fd[2] = open (filename[2].c_str(), flags[2], S_IRWXU | S_IRWXG | S_IRWXO);
 		dup2 (fd[2], 2);
 	}
 }

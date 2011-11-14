@@ -3,6 +3,7 @@
 
 #include <errno.h>
 
+//! Definicoes de flags da shell
 #define shooSH_EXIT		1
 #define shooSH_PIPE		2
 #define shooSH_REDIR	4
@@ -10,6 +11,6 @@
 #define shooSH_FAIL		16
 #define shooSH_BG		32
 
-extern int errno;
+extern int errno; //!< Indicador de erro de certas chamadas de sistema
 
 #endif

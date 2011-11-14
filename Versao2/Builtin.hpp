@@ -7,8 +7,8 @@
 	
 std::list<std::string>	history;
 
-/*
- *	Mostra todos os jobs da lista
+/*!
+ *	\brief Mostra todos os jobs da lista.
  */
 void jobs (void) {
 
@@ -18,8 +18,8 @@ void jobs (void) {
 	}
 }
 
-/*
- *	Mostra comandos digitados ateh o momento
+/*!
+ *	\brief Mostra comandos digitados ate o momento.
  */
 void showHistory (void) {
 
@@ -30,13 +30,10 @@ void showHistory (void) {
 	}
 }
 
-/*
- *	Envia um sinal SIGTERM para o job dado por id
- *	
- *	\Param
- *		ID do job
- *	\Exception
- *		-id	Job inexistente
+/*!
+ *	\brief Envia um sinal SIGTERM para o job dado por id.
+ *	\param id ID do job.
+ *	\exception -id	Job inexistente.
  */
 void sendsigterm (int id) {
 	std::list<Job*>::iterator curr, end;
@@ -46,8 +43,10 @@ void sendsigterm (int id) {
 		kill (-(*curr)->getPGID(), SIGTERM);
 }
 
-/*
- *	Escreve os argumentos com 1 espaco entre eles
+/*!
+ *	\brief Escreve os argumentos com 1 espaco entre eles.
+ *	\param argc Numero de palavras a serem escritas + 1.
+ *	\param args Palavras a serem escritas, comeca com "echo".
  */
 void echo (int argc, char* args[]) {
 	int i;
@@ -56,11 +55,9 @@ void echo (int argc, char* args[]) {
 	printf ("%s\n", args[i]);
 }
 
-/*
- *	Muda o diretorio atual
- *	
- *	\Param
- *		Diretorio para o qual ocorrera a mudanca
+/*!
+ *	\brief Muda o diretorio atual.
+ *	\param dir Diretorio para o qual ocorrera a mudanca.
  */
 void changeDirectory (const char* dir) {
 
@@ -68,11 +65,9 @@ void changeDirectory (const char* dir) {
 		std::cout << "cd: Diretorio \"" << dir << "\" invalido" << std::endl;
 }
 
-/*
- *	Mostra o diretorio atual
- *	
- *	\Exception
- *		-1	Diretorio maior que 256 caracteres
+/*!
+ *	\brief Mostra o diretorio atual.
+ *	\exception -1	Diretorio maior que 256 caracteres.
  */
 void showDirectoryName (void) {
 
@@ -81,13 +76,10 @@ void showDirectoryName (void) {
 	printf ("%s\n", buf);
 }
 
-/*
- *	Coloca o job em execucao
- *
- *	\Param
- *		ID do job
- *	\Exception
- *		-ID	Job nao encontrado
+/*!
+ *	\brief Coloca o job em execucao em foreground.
+ *	\param id ID do job.
+ *	\exception -ID	Job nao encontrado.
  */
 void foreground (int id) {
 	std::list<Job*>::iterator curr, end;
@@ -102,11 +94,11 @@ void foreground (int id) {
 		throw -id;
 	} else {
 		(*curr)->setBG(false);
-		(*curr)->print();
 		tcsetattr(STDIN_FILENO, TCSADRAIN, (*curr)->getTermios());
 		tcsetpgrp (STDIN_FILENO, (*curr)->getPGID());
 		
-		kill (-(*curr)->getPGID(), SIGCONT); /*TODO descobrir como se volta o processo para fg*/
+		kill (-(*curr)->getPGID(), SIGCONT);
+		
 		while ((pid = waitpid ((*curr)->getPGID(), &status, WUNTRACED)) == -1 && (err = errno) == EINTR);
 		if (pid == -1) {
 			fprintf (stderr, "Erro: fg: ");
@@ -116,20 +108,15 @@ void foreground (int id) {
 			tcgetattr (STDIN_FILENO, (*curr)->getTermios());
 			tcsetattr(STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 			tcsetpgrp (STDIN_FILENO, shooSHPGID);
-			
-			/**if (WIFEXITED(status)) {
-				fprintf (stderr, "Filho %d saiu com %d\n", pid, WEXITSTATUS(status));
-			} else if (WIFSIGNALED(status)) {
-				fprintf (stderr, "Filho %d foi terminado por um sinal %d\n", (*curr)->getPGID(),  WTERMSIG(status)==SIGTSTP);
-			} else if (WIFSTOPPED(status)) {
-				fprintf (stderr, "Filho %d estava stopped ainda %d\n", (*curr)->getPGID(), WSTOPSIG(status));
-			} else if (WIFCONTINUED(status)) {
-				fprintf (stderr, "Filho %d continuou\n", (*curr)->getPGID());
-			}/**/
 		}
 	}
 }
 
+/*!
+ *	\brief Coloca o job em execucao em background.
+ *	\param id ID do job.
+ *	\exception -ID	Job nao encontrado.
+ */
 void background (int id) {
 	std::list<Job*>::iterator curr, end;
 	for (curr = jobList.begin(), end = jobList.end(); curr != end && (*curr)->getID() != id; curr++);
@@ -140,19 +127,18 @@ void background (int id) {
 		// shooSH volta ao terminal
 		tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 		tcsetpgrp (STDIN_FILENO, shooSHPGID);
-		
 		kill (-(*curr)->getPGID(), SIGCONT);
+		
 	}
 }
 
 
-/*
- *	Executa comandos builtin
+/*!
+ *	\brief Executa comandos builtin.
  *
- *	\Param
- *		Processo a ser executado
- *	\Return
- *		-1	Comando nao eh builtin
+ *	\param p Processo a ser executado.
+ *	\return
+ *		0 	Comando nao eh builtin
  *		1	Faltam parametros
  *		2	Erro nos parametros
  *		0	Sucesso

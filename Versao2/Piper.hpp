@@ -8,17 +8,18 @@
 #include "Process.hpp"
 #include "Builtin.hpp"
 
+/*!
+ * Classe para execucao de comandos com pipe.
+ */
 class Piper {
 public:
 	Piper (void) {}
 
-	/*
-	 *	Executa um job com pipe
-	 *	
-	 *	@Param
-	 *		Ponteiro para o job a ser executado
-	 *	@Throw
-	 *		-1	Erro no fork
+	/*!
+	 *	\brief Executa um job com pipe.
+	 *		Implementada como uma fila invertida, ou seja, o primeiro comando a ser executado sera o processo com maior PID.
+	 *	\param job Ponteiro para o job a ser executado
+	 *	\throw -1	Erro no fork
 	 */
 	void execPipe (Job* job) {
 		pid_t pid;
@@ -38,6 +39,7 @@ public:
 				exit (1);
 			}
 			
+			// fecha descritor nao usado
 			close (fd[0][1]);
 			dup2 (fd[0][0], 0);
 
@@ -65,6 +67,7 @@ public:
 						exit (1);
 					}
 					
+					// fecha descritores nao usados
 					close (fd[i-1][0]);
 					close (fd[i][1]);
 					dup2 (fd[i][0],0);

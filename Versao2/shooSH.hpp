@@ -12,17 +12,19 @@
 #include "Initializer.hpp"
 #include "shooSHlib.hpp"
 
-int currID;
-Initializer initializer;
+int currID; //!< ID do ultimo Job criado.
 
-		
-void shooSH_init() { 
-
-	initializer.init();	
+/*!
+ *	\brief Funcao de inicializacao da Shell
+ */
+void shooSH_init (void) { 
+	init_tty();	
 	currID = 0;
 }
 
-
+/*!
+ *	\brief Funcao para liberar os recursos alocados pela Shell
+ */
 void shooSH_clean(void) {
 	std::list<Job*>::iterator curr, end;
 	for (curr =jobList.begin(), end = jobList.end(); curr != end; curr++) {
@@ -31,8 +33,8 @@ void shooSH_clean(void) {
 	jobList.clear();
 }
 
-/**
- *	Executor da Shell
+/*!
+ *	\brief Funcao que executa a Shell.
  */
 void shooSH_run (void) {
 	Job* job;

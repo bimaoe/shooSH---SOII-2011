@@ -7,7 +7,7 @@ RESPONSAVEL: MARCELO HONORATO MARLETA
 ALUNOS: BIANCA OE 6810554, RAFAEL NAKANISHI 6793198
 
 INTRODUCAO
-	+ O projeto foi desenvolvido nas linguagens C/C++
+	+ O projeto tem como objetivo a criacao de um Shell com controle e execucao de processos, comandos integrados e foi desenvolvido nas linguagens C/C++
 
 	+ Foram desenvolvidas classes para as estruturas Job e Process
 	  	Process representa um processo. Armazena as seguintes informacoes:

@@ -14,18 +14,20 @@
 #include "Initializer.hpp"
 #include "Builtin.hpp"
 
+/*!
+ *	Executor
+ *	\brief Classe que executa os comandos
+ */
+
 class Executor {
 public:
 	Executor (void) {};
 	
-	/*
-	 *	Executa um job
-	 *	@Param
-	 *		Ponteiro para o job a ser executado
-	 *	@Exception
-	 *		-1		erro no fork
+	/*!
+	 *	\brief Executa um job.
+	 *	\param job Ponteiro para o job a ser executado.
+	 *	\exception -1 Ocorreu um erro no fork.
 	 */
-	
 	void execute (Job* job) {
 	 	pid_t pid;
 		int status, err;
@@ -37,6 +39,7 @@ public:
 		else if (pid == 0) { // o filho executa o processo
 			if (!job->inBG()) //se for foreground
 				tcsetpgrp (STDIN_FILENO, job->getPGID()); //vira o dono do terminal
+			// seta todos handlers para default
 			signal (SIGINT, SIG_DFL);
 			signal (SIGQUIT, SIG_DFL);
 			signal (SIGTSTP, SIG_DFL);
@@ -44,15 +47,14 @@ public:
 			signal (SIGTTOU, SIG_DFL);
 			signal (SIGCHLD, SIG_DFL);
 			
-//			fprintf (stderr, "Executando %d\n", getpid());
 			job->setPGID(getpid());
 			setpgid (getpid(), getpid());
 			
-			if (job->hasPipe()) {
+			if (job->hasPipe()) { // se houver pipe, manda para o piper executar
 			
 				Piper piper;
 				piper.execPipe (job);
-			} else {
+			} else { // se nao houver, executa
 				job->getProcess(0)->setPID(getpid());
 				
 				if (job->getProcess(0)->hasRedirection()) {
@@ -75,17 +77,15 @@ public:
 				tcsetpgrp (STDIN_FILENO, pid);
 				
 				while ((w = waitpid(pid, &status, WUNTRACED)) == -1 && (err = errno) == EINTR);
-				if (w == -1) {
+				if (w == -1) { // se deu erro
 					fprintf (stderr, "Erro: Executor: ");
 					if (err == ECHILD)	fprintf (stderr, "processo (%d) nao existe ou nao eh meu filho\n", pid);
 					else	fprintf (stderr, "EINVAL\n");
 				} else {
+					// devolve o terminal para a shell
 					tcgetattr(STDIN_FILENO, job->getTermios());
 					tcsetattr (STDIN_FILENO, TCSADRAIN, &shooSHTermios);
 					tcsetpgrp (STDIN_FILENO, shooSHPGID);
-					/**if (WIFEXITED(status))	std::cout << "Filho " << pid << " saiu com status " << WEXITSTATUS(status) << std::endl;
-					else if (WIFSIGNALED(status))	std::cout << "Filho " << pid << " recebeu sinal " << WTERMSIG(status) << std::endl;
-					else if (WIFSTOPPED(status))	std::cout << "Filho " << pid << " foi parado por sinal " << WSTOPSIG(status) << std::endl;/**/
 				}
 			} else
 				tcgetattr(STDIN_FILENO, job->getTermios()); // Pega os atributos do job

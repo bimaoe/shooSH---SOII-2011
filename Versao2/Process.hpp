@@ -9,21 +9,23 @@
 #include <iostream>
 #include "Redirector.hpp"
 
+/*!
+ *	Classe de processo
+ */
 class Process{
 
 	private:
-		char**		command;
+		char**		command; //matriz de comandos
 		int     	cmdSize; //tamanho da matriz de comandos
-		pid_t   	pid;
-		int     	status;
+		pid_t   	pid; //PID do pricesso
 		std::string	filename[3]; //nome dos arquivos de redirecionamento
 		int     	redirflag[3]; //flag de redirecionamento
 
 	public:
 
 		Process(void);
-		/*
-		 *	Desaloca a matriz de comandos
+		/*!
+		 *	\brief Desaloca a matriz de comandos
 		 */
 		void			destroy (void);
 		
@@ -51,11 +53,11 @@ Process::Process() {
 void Process::print(void) {
 
 	int i;
-	printf ("Comandos:\n");
-	for (i = 0; i < cmdSize; i++) {
-		printf ("%s\n", command[i]);
-	}
-	printf ("Redirecionamento:\n");
+	std::cout << "PID: " << pid << std::endl;
+	std::cout << "Comandos:" << std::endl;
+	for (i = 0; i < cmdSize; i++)
+		std::cout << command[i] << std::endl;
+	std::cout << "Redirecionamento:" << std::endl;
 	for (i = 0; i < 3; i++)
 		if (redirflag[i] != -1)	std::cout << i << " " << filename[i] << std::endl;
 }

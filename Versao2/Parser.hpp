@@ -13,11 +13,12 @@
 #include "Redirector.hpp"
 #include "shooSHlib.hpp"
 
+//! Definicoes de limites
 #define NUM_WORDS		100
 #define MAX_LENGTH		1024
 #define MAX_FILENAME	128
 
-// Estados da maquina de estados
+//! Estados da maquina de estados
 #define PARSCMD			0
 #define PARSNEXT		1
 #define PARSPARAM		2
@@ -29,29 +30,31 @@
 #define PARSSUCCESS		8
 #define PARSFAIL		9
 
+/*!
+ *	\brief Parser de linha
+ */
 class Parser {
 	private:
-		int		currState;
-		Job*	job;
-		char**	cmdList;
-		int		cmdListSize;
-		int		currChar;
-		char	line[MAX_LENGTH];
-		char	filename[MAX_FILENAME];
+		int		currState; //Estado atual
+		Job*	job; //Ponteiro para o job que sera devolvido
+		char**	cmdList; //Matriz de comandos
+		int		cmdListSize; //Tamanho da matriz de comandos
+		int		currChar; //Indice do caracter atual
+		char	line[MAX_LENGTH]; //Linha de comando
+		char	filename[MAX_FILENAME]; //Nome de arquivo de redirecionamento
 
-		void initialize (void);
-		void newWord (void);
-		void endWord (void);
-		void newProcess (void);
-		void endProcess (void);
+		void initialize (void); //Funcao que inicializa o parser
+		void newWord (void); //Funcao que inicia uma nova palavra na matriz de comandos
+		void endWord (void); //Funcao que termina uma palavra da matriz de comandos
+		void newProcess (void); //Funcao que cria um novo processo no job
+		void endProcess (void); //Funcao que termina a criacao do processo no job
 
 	public:
 		Parser (void);
-		/* 
-		 * 	Pega uma linha de comando
-		 *	
-		 * 	Retorno
-		 *		Ponteiro para o job gerado
+		/*! 
+		 * 	\brief Pega uma linha de comando.
+		 *		Implementada como uma maquina de estados para reconhecer a linguagem gerada pela gramatica indicada na especificacao.
+		 * 	\return	Ponteiro para o job gerado.
 		 */
 		Job* parseLine (void);
 };
@@ -95,7 +98,7 @@ Job* Parser::parseLine (void) {
 	i = 0;
 	while (i < length && line[i] == ' ')	i++;
 	length = strlen(line+i);
-	// check for blank line
+	// Checa se a linha nao estava em branco
 	if (length == 0) {
 		job->addFlag (shooSH_NOP);
 		return job;
@@ -226,20 +229,20 @@ Job* Parser::parseLine (void) {
 			currState = PARSFILENAME;
 		} else if (currState == PARSFILENAME) {
 			while (i < length && line[i] == ' ')	i++;
-			if (i == length)	currState = PARSFAIL; // TODO admitting the filename will be always valid
+			if (i == length)	currState = PARSFAIL;
 			else {
 				curr = 0;
-				if (line[i] == '"') { // get filenames like "file name"
+				if (line[i] == '"') { // le nomes como "file name"
 					i++;
 					while (i < length && line[i] != '"')	filename[curr++] = line[i++];
 					if (i == length)	currState = PARSFAIL;
 					else	i++;
-				} else if (line[i] == '\'') { // get filenames like 'file name'
+				} else if (line[i] == '\'') { // le nomes do tipo 'file name'
 					i++;
 					while (i < length && line[i] != '\'')	filename[curr++] = line[i++];
 					if (i == length)	currState = PARSFAIL;
 					else	i++;
-				} else {
+				} else { // le nomes do tipo filename
 					while (i < length && line[i] != ' ')	filename[curr++] = line[i++];
 				}
 				filename[curr] = '\0';
