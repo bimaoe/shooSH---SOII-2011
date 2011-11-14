@@ -13,25 +13,30 @@ INTRODUCAO
 	  	Process representa um processo. Armazena as seguintes informacoes:
 			PID - ID do processo
 			Comando a ser executado
-			Nome dos arquivos de redirecionamento (se houver)
+			Informacoes para redirecionamento (se houver)
 		Job e um conjunto de processos que devem ser executados em pipe.
 			Armazena as seguintes informacoes:
 			PGID - ID do grupo de processos. Coincide com o PID do primeiro
 			  processo do conjunto
 			ID para controle interno
-			Flags de status
-
+			Flags de status como parado, ativo, em foreground ou background.
+			Lista de processos
+			
 	+ O shell desenvolvido e constituido basicamente de:
 		Parser
 			Responsavel por ler e analisar uma linha de comando, e inicializar um Job com esses dados.
-		Executor
-			Responsavel por executar um Job.
+			Reconhece como comando a sentenca gerada pela gramatica da especificacao do projeto. A linha deve ter no maximo 1023 caracteres.
+		Executor e Piper
+			Responsaveis por executar um Job.
+		Redirector
+			Responsavel abrir, fechar e duplicar descritores de arquivo
 		shooSH
 			Shell propriamente dita. E responsavel por chamar as outras classes e executar os comandos integrados.
+			Nao e possivel mesclar comandos integrados com comandos externos, ja que a execucao e feita de maneira diferente para os dois tipos de comando.
 
 IMPLEMENTACAO
-	+ No total foram criados 
-
+	+ Todas as caracteristicas pedidas foram implementadas	
+		
 	+ Todos os comandos integrados pedidos foram implementados
 		Chamadas:
 			jobs
@@ -42,6 +47,14 @@ IMPLEMENTACAO
 			echo args1 arg2 ... argn
 			pwd
 			cd path
-	+ 
+			history
+	
+	+ Decisoes de projeto
+		Na classe Process, os comandos sao armazenados em uma matriz de caracteres em vez de em um vetor de strings porque a funcao execvp recebe uma matriz de caracteres, entao e necessario copia-la.
+		A lista de Jobs da shell e global para que possa ser acessada dentro de funcoes de tratamento de sinal.
+		Na classe Job, sao armazenados ponteiros para processos para que nao seja necessario fazer uma copia de um processo.
+		Para que nao haja problemas de paralelismo, todos os sinais sao bloqueados enquanto o sinal SIGCHLD e tratado.
+	
 COMENTARIOS
-	+
+
+	+ O arquivo teste.txt contem os comandos utilizados para testar as funcionalidades implementadas e suas respectivas saidas.
