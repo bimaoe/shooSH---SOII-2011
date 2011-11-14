@@ -1,0 +1,167 @@
+O teste foi feito em uma única execução da shell e é constituído dos seguintes passos:
+	1- Teste de um comando simples sem argumentos
+	2- Teste de um comando simples com argumentos
+	3- Teste de um comando simples com redirecionamento
+	4- Teste de um conjunto de comandos com pipes
+	5- Teste de um conjunto de comandos com pipes e redirecionamento
+	6- Teste de um processo em background
+	7- Teste de comandos integrados
+	8- Teste de comandos inválidos
+	9- Saída da shell
+
+1-
+Comando: ls
+Saída:
+[1]	3211
+a.out	      gprof2dot.py     main.cpp    Piper.hpp	   shoosh
+Builtin.hpp   graph.png        makefile    Process.hpp	   shooSH.hpp
+Executor.hpp  Initializer.hpp  out	   README	   shooSHlib.hpp
+gmon.out      Job.hpp	       Parser.hpp  Redirector.hpp
+[1]	Finalizado	ls
+
+2-
+Comando: ls -la
+Saída:
+[2]	3212
+total 1076
+drwxr-xr-x 2 bimaoe bimaoe   4096 2011-11-14 21:13 .
+drwxr-xr-x 5 bimaoe bimaoe   4096 2011-11-14 17:13 ..
+-rwxr-xr-x 1 bimaoe bimaoe  57026 2011-11-14 16:47 a.out
+-rw-r--r-- 1 bimaoe bimaoe   5100 2011-11-14 16:49 Builtin.hpp
+-rw-r--r-- 1 bimaoe bimaoe   2498 2011-11-14 15:56 Executor.hpp
+-rw-r--r-- 1 bimaoe bimaoe  13866 2011-11-14 17:14 gmon.out
+-rwxr-xr-x 1 bimaoe bimaoe  88594 2011-11-14 13:17 gprof2dot.py
+-rw-r--r-- 1 bimaoe bimaoe 792174 2011-11-14 17:15 graph.png
+-rw-r--r-- 1 bimaoe bimaoe   3667 2011-11-14 21:07 Initializer.hpp
+-rw-r--r-- 1 bimaoe bimaoe   3793 2011-11-14 16:22 Job.hpp
+-rw-r--r-- 1 bimaoe bimaoe    129 2011-11-13 16:46 main.cpp
+-rw-r--r-- 1 bimaoe bimaoe    416 2011-11-13 19:55 makefile
+-rwxr-xr-x 1 bimaoe bimaoe   2848 2011-11-14 14:52 out
+-rw-r--r-- 1 bimaoe bimaoe   6449 2011-11-14 16:30 Parser.hpp
+-rw-r--r-- 1 bimaoe bimaoe   2838 2011-11-14 16:34 Piper.hpp
+-rw-r--r-- 1 bimaoe bimaoe   2365 2011-11-14 16:37 Process.hpp
+-rw-r--r-- 1 bimaoe bimaoe   2592 2011-11-14 21:09 README
+-rw-r--r-- 1 bimaoe bimaoe   1881 2011-11-14 16:39 Redirector.hpp
+-rwxr-xr-x 1 bimaoe bimaoe  57218 2011-11-14 17:10 shoosh
+-rw-r--r-- 1 bimaoe bimaoe   1418 2011-11-14 16:44 shooSH.hpp
+-rw-r--r-- 1 bimaoe bimaoe    311 2011-11-14 16:43 shooSHlib.hpp
+-rw------- 1 bimaoe bimaoe  12288 2011-11-14 21:18 .teste.txt.swp
+[2]	Finalizado	ls -la
+
+3-
+Comando: ls > out.txt
+Saída:
+[3]	3215
+[3]	Finalizado	ls > out.txt
+
+Comando: grep .hpp < out.txt
+Saída:
+[4]	3219
+Builtin.hpp
+Executor.hpp
+Initializer.hpp
+Job.hpp
+Parser.hpp
+Piper.hpp
+Process.hpp
+Redirector.hpp
+shooSH.hpp
+shooSHlib.hpp
+[4]	Finalizado	grep .hpp < out.txt
+
+4-
+Comando: ls -la | grep s | sort
+Saída:
+[6]	3229
+-rw------- 1 bimaoe bimaoe  12288 2011-11-14 21:23 .teste.txt.swp
+-rw-r--r-- 1 bimaoe bimaoe   1418 2011-11-14 16:44 shooSH.hpp
+-rw-r--r-- 1 bimaoe bimaoe   2365 2011-11-14 16:37 Process.hpp
+-rw-r--r-- 1 bimaoe bimaoe    311 2011-11-14 16:43 shooSHlib.hpp
+-rw-r--r-- 1 bimaoe bimaoe   6449 2011-11-14 16:30 Parser.hpp
+-rwxr-xr-x 1 bimaoe bimaoe  57218 2011-11-14 17:10 shoosh
+[6]	Finalizado	ls -la | grep s | sort
+
+Comando: cal | sort
+Saída: 
+[7]	3236
+                      
+       1  2  3  4  5  
+13 14 15 16 17 18 19  
+20 21 22 23 24 25 26  
+27 28 29 30           
+ 6  7  8  9 10 11 12  
+   November 2011      
+Su Mo Tu We Th Fr Sa  
+[7]	Finalizado	cal | sort
+
+5- 
+Comando: cal | sort | grep 2 > out.txt
+Saída:
+[12]	3261
+[12]	Finalizado	cal | sort | grep 2 > out.txt
+Conteúdo de out.txt:
+       1  2  3  4  5  
+20 21 22 23 24 25 26  
+27 28 29 30           
+ 6  7  8  9 10 11 12  
+   November 2011 
+
+6-
+Comando: xeyes &
+Saída:
+[14]	3278
+
+7-
+Comando: jobs
+Saída:
+[14]	Ativo		xeyes  &
+
+Comando: kill %14
+Saída:
+shooSH> [14]	Finalizado	xeyes 
+
+Comando x Saída 
+xeyes & x [15]	3287
+fg %15 
+Ctrl+C x ^C[15]	Finalizado	xeyes 
+
+Comando x Saída
+xeyes x [16]	3290
+Ctrl+Z x ^Z[16]	Parado		xeyes
+bg %16 x shooSH> [16]	Ativo		xeyes &
+fg %16
+kill %16 x ^C[1]	Finalizado	xeyes
+
+Comando: pwd
+Saída:
+/home/bimaoe/Documents/shooSH---SOII-2011/Versao2
+
+Comandos:
+cd ..
+pwd
+Saída:
+/home/bimaoe/Documents/shooSH---SOII-2011
+
+8-
+Comando: gr
+Saída:
+[17]	3312
+Erro no execvp
+[17]	Finalizado	gr
+
+Comando: ls |
+Saída:
+Erro de sintaxe
+
+Comando: ls > 
+Saída:
+Erro de sintaxe
+
+Comando: ls | gr
+Saída:
+[18]	3320
+Erro: comando inexistente
+[18]	Finalizado	ls | gr
+
+9-
+Comando: exit

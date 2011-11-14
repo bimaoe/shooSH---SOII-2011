@@ -54,7 +54,8 @@ IMPLEMENTACAO
 		A lista de Jobs da shell e global para que possa ser acessada dentro de funcoes de tratamento de sinal.
 		Na classe Job, sao armazenados ponteiros para processos para que nao seja necessario fazer uma copia de um processo.
 		Para que nao haja problemas de paralelismo, todos os sinais sao bloqueados enquanto o sinal SIGCHLD e tratado.
-	
+		Os comandos integrados sao executados diretamente pela shell, sem utilizar nenhuma chamada a funcao fork().
+
 COMENTARIOS
 
 	+ O arquivo teste.txt contem os comandos utilizados para testar as funcionalidades implementadas e suas respectivas saidas.
