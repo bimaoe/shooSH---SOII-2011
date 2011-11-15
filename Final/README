@@ -1,0 +1,62 @@
+UNIVERSIDADE DE SAO PAULO
+INSTITUTO DE CIENCIAS MATEMATICAS E COMPUTACAO
+PROJETO DE SISTEMAS OPERACIONAIS II - SSC 0141
+IMPLEMENTACAO DE UM SHELL
+
+RESPONSAVEL: MARCELO HONORATO MARLETA
+ALUNOS: BIANCA OE 6810554, RAFAEL NAKANISHI 6793198
+
+INTRODUCAO
+	+ O projeto tem como objetivo a criacao de um Shell com controle e execucao de processos, comandos integrados e foi desenvolvido nas linguagens C/C++
+
+	+ Foram desenvolvidas classes para as estruturas Job e Process
+	  	Process representa um processo. Armazena as seguintes informacoes:
+			PID - ID do processo
+			Comando a ser executado
+			Informacoes para redirecionamento (se houver)
+		Job e um conjunto de processos que devem ser executados em pipe.
+			Armazena as seguintes informacoes:
+			PGID - ID do grupo de processos. Coincide com o PID do primeiro
+			  processo do conjunto
+			ID para controle interno
+			Flags de status como parado, ativo, em foreground ou background.
+			Lista de processos
+			
+	+ O shell desenvolvido e constituido basicamente de:
+		Parser
+			Responsavel por ler e analisar uma linha de comando, e inicializar um Job com esses dados.
+			Reconhece como comando a sentenca gerada pela gramatica da especificacao do projeto. A linha deve ter no maximo 1023 caracteres.
+			Alem disso, e possivel fazer redirecionamento de erro utilizando os tokens 2> e 2>>.
+		Executor e Piper
+			Responsaveis por executar um Job.
+		Redirector
+			Responsavel abrir, fechar e duplicar descritores de arquivo
+		shooSH
+			Shell propriamente dita. E responsavel por chamar as outras classes e executar os comandos integrados.
+			Nao e possivel mesclar comandos integrados com comandos externos, ja que a execucao e feita de maneira diferente para os dois tipos de comando.
+
+IMPLEMENTACAO
+	+ Todas as caracteristicas pedidas foram implementadas	
+		
+	+ Todos os comandos integrados pedidos foram implementados
+		Chamadas:
+			jobs
+			exit
+			kill %job
+			fg %job
+			bg %job
+			echo args1 arg2 ... argn
+			pwd
+			cd path
+			history
+	
+	+ Decisoes de projeto
+		Na classe Process, os comandos sao armazenados em uma matriz de caracteres em vez de em um vetor de strings porque a funcao execvp recebe uma matriz de caracteres, entao e necessario copia-la.
+		A lista de Jobs da shell e global para que possa ser acessada dentro de funcoes de tratamento de sinal.
+		Na classe Job, sao armazenados ponteiros para processos para que nao seja necessario fazer uma copia de um processo.
+		Para que nao haja problemas de paralelismo, todos os sinais sao bloqueados enquanto o sinal SIGCHLD e tratado.
+		Os comandos integrados sao executados diretamente pela shell, sem utilizar nenhuma chamada a funcao fork().
+
+COMENTARIOS
+
+	+ O arquivo teste.txt contem os comandos utilizados para testar as funcionalidades implementadas e suas respectivas saidas.
