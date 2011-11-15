@@ -1,0 +1,64 @@
+\hypertarget{group__Initializer}{
+\section{Initializer}
+\label{group__Initializer}\index{Initializer@{Initializer}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__Initializer_ga427b8391fe7c3a1407d5fc04dcd6a62e}{
+void \hyperlink{group__Initializer_ga427b8391fe7c3a1407d5fc04dcd6a62e}{hanchld} (int signum, siginfo\_\-t $\ast$siginfo, void $\ast$context)}
+\label{group__Initializer_ga427b8391fe7c3a1407d5fc04dcd6a62e}
+
+\begin{DoxyCompactList}\small\item\em Handler para sinais de processos filhos. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_ga2e0e24610063a598497c1cec18556a6e}{
+void \hyperlink{group__Initializer_ga2e0e24610063a598497c1cec18556a6e}{hanttin} (int signum, siginfo\_\-t $\ast$siginfo, void $\ast$context)}
+\label{group__Initializer_ga2e0e24610063a598497c1cec18556a6e}
+
+\begin{DoxyCompactList}\small\item\em Handler para o sinal SIGTTIN. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_ga9e6fdc72e9bcee53fec2361be71d9599}{
+void \hyperlink{group__Initializer_ga9e6fdc72e9bcee53fec2361be71d9599}{hanttou} (int signum)}
+\label{group__Initializer_ga9e6fdc72e9bcee53fec2361be71d9599}
+
+\begin{DoxyCompactList}\small\item\em Handler para o sinal SIGTTOU. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_gac63bd0fae717f105be185ccfd755ca16}{
+void \hyperlink{group__Initializer_gac63bd0fae717f105be185ccfd755ca16}{init\_\-tty} (void)}
+\label{group__Initializer_gac63bd0fae717f105be185ccfd755ca16}
+
+\begin{DoxyCompactList}\small\item\em Inicializa sinais e entrega o terminal para shell. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__Initializer_ga99d0e028a4300cbe0e5337da36c121db}{
+std::list$<$ \hyperlink{classJob}{Job} $\ast$ $>$ \hyperlink{group__Initializer_ga99d0e028a4300cbe0e5337da36c121db}{jobList}}
+\label{group__Initializer_ga99d0e028a4300cbe0e5337da36c121db}
+
+\begin{DoxyCompactList}\small\item\em Lista de Jobs da shell. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_ga00f9ce17f68cf42b2224377d321905e2}{
+struct termios \hyperlink{group__Initializer_ga00f9ce17f68cf42b2224377d321905e2}{shooSHTermios}}
+\label{group__Initializer_ga00f9ce17f68cf42b2224377d321905e2}
+
+\begin{DoxyCompactList}\small\item\em Atributos da shell. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_ga5f79c3e0de65b7dce646a1a28b6ba87b}{
+pid\_\-t \hyperlink{group__Initializer_ga5f79c3e0de65b7dce646a1a28b6ba87b}{shooSHPGID}}
+\label{group__Initializer_ga5f79c3e0de65b7dce646a1a28b6ba87b}
+
+\begin{DoxyCompactList}\small\item\em Group ID da shell. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_gaad0d7cdeb1b58eb73b6974e9202935fd}{
+struct sigaction \hyperlink{group__Initializer_gaad0d7cdeb1b58eb73b6974e9202935fd}{sa\_\-chld}}
+\label{group__Initializer_gaad0d7cdeb1b58eb73b6974e9202935fd}
+
+\begin{DoxyCompactList}\small\item\em Estrutura para o sinal SIGCHLD. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_gacdfc77c55a9709f5e086c50d61ce8ec4}{
+struct sigaction \hyperlink{group__Initializer_gacdfc77c55a9709f5e086c50d61ce8ec4}{sa\_\-ttin}}
+\label{group__Initializer_gacdfc77c55a9709f5e086c50d61ce8ec4}
+
+\begin{DoxyCompactList}\small\item\em Estrutura para o sinal SIGTTIN. \end{DoxyCompactList}\item 
+\hypertarget{group__Initializer_ga368acdb3dffe16d4b183e3549cb68b91}{
+struct sigaction \hyperlink{group__Initializer_ga368acdb3dffe16d4b183e3549cb68b91}{sa\_\-ttou}}
+\label{group__Initializer_ga368acdb3dffe16d4b183e3549cb68b91}
+
+\begin{DoxyCompactList}\small\item\em Estrutura para o sinal SIGTTOU. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Atributos da shell e funcoes de inicializacao. \}@ 

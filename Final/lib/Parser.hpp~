@@ -25,11 +25,10 @@
  *	\addtogroup Parser
  *	@{
  */
-// limites 
+ 
 #define NUM_WORDS		100
 #define MAX_LENGTH		1024
 #define MAX_FILENAME	128
-// estados
 #define PARSCMD			0
 #define PARSNEXT		1
 #define PARSPARAM		2

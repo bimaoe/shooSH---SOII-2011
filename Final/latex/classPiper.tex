@@ -1,0 +1,47 @@
+\hypertarget{classPiper}{
+\section{Piper Class Reference}
+\label{classPiper}\index{Piper@{Piper}}
+}
+
+
+{\ttfamily \#include $<$Piper.hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classPiper_ad3f8b5ddf44a1093a00b0415056a3c8b}{execPipe} (\hyperlink{classJob}{Job} $\ast$job)
+\begin{DoxyCompactList}\small\item\em Executa um job com pipe. Implementada como uma fila invertida, ou seja, o primeiro comando a ser executado sera o processo com maior PID. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Classe para execucao de comandos com pipe. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classPiper_ad3f8b5ddf44a1093a00b0415056a3c8b}{
+\index{Piper@{Piper}!execPipe@{execPipe}}
+\index{execPipe@{execPipe}!Piper@{Piper}}
+\subsubsection[{execPipe}]{\setlength{\rightskip}{0pt plus 5cm}void Piper::execPipe (
+\begin{DoxyParamCaption}
+\item[{{\bf Job} $\ast$}]{job}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classPiper_ad3f8b5ddf44a1093a00b0415056a3c8b}
+
+
+Executa um job com pipe. Implementada como uma fila invertida, ou seja, o primeiro comando a ser executado sera o processo com maior PID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em job} & Ponteiro para o job a ser executado \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em -\/1} & Erro no fork \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+Piper.hpp\end{DoxyCompactItemize}

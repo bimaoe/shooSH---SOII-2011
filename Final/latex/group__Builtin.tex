@@ -1,0 +1,182 @@
+\hypertarget{group__Builtin}{
+\section{Builtin}
+\label{group__Builtin}\index{Builtin@{Builtin}}
+}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__Builtin_ga1dbeb31edd7af44ae1b85171480b01fa}{
+void \hyperlink{group__Builtin_ga1dbeb31edd7af44ae1b85171480b01fa}{jobs} (void)}
+\label{group__Builtin_ga1dbeb31edd7af44ae1b85171480b01fa}
+
+\begin{DoxyCompactList}\small\item\em Mostra todos os jobs da lista. \end{DoxyCompactList}\item 
+\hypertarget{group__Builtin_ga478ac1b18e4d00275c6099bf6e3b9fc6}{
+void \hyperlink{group__Builtin_ga478ac1b18e4d00275c6099bf6e3b9fc6}{showHistory} (void)}
+\label{group__Builtin_ga478ac1b18e4d00275c6099bf6e3b9fc6}
+
+\begin{DoxyCompactList}\small\item\em Mostra comandos digitados ate o momento. \end{DoxyCompactList}\item 
+void \hyperlink{group__Builtin_ga460421fbb6a8b9f00cece4ed94ea1ce1}{sendsigterm} (int id)
+\begin{DoxyCompactList}\small\item\em Envia um sinal SIGTERM para o job dado por id. \end{DoxyCompactList}\item 
+void \hyperlink{group__Builtin_gad8fec49ba2349ed854c1172d14676697}{echo} (int argc, char $\ast$args\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Escreve os argumentos com 1 espaco entre eles. \end{DoxyCompactList}\item 
+void \hyperlink{group__Builtin_ga4fc7bbc95c3bcdc5faa5012ddf404913}{changeDirectory} (const char $\ast$dir)
+\begin{DoxyCompactList}\small\item\em Muda o diretorio atual. \end{DoxyCompactList}\item 
+\hypertarget{group__Builtin_ga6f6fd30fb241544435ae349effcf453c}{
+void \hyperlink{group__Builtin_ga6f6fd30fb241544435ae349effcf453c}{showDirectoryName} (void)}
+\label{group__Builtin_ga6f6fd30fb241544435ae349effcf453c}
+
+\begin{DoxyCompactList}\small\item\em Mostra o diretorio atual. 
+\begin{DoxyExceptions}{Exceptions}
+{\em -\/1} & Diretorio maior que 256 caracteres. \\
+\hline
+\end{DoxyExceptions}
+\end{DoxyCompactList}\item 
+void \hyperlink{group__Builtin_gac001b748ccd4d93fdf0359655bfc13f2}{foreground} (int id)
+\begin{DoxyCompactList}\small\item\em Coloca o job em execucao em foreground. \end{DoxyCompactList}\item 
+void \hyperlink{group__Builtin_gaba0faeb21dd37ec84f38fbc4033224f3}{background} (int id)
+\begin{DoxyCompactList}\small\item\em Coloca o job em execucao em background. \end{DoxyCompactList}\item 
+int \hyperlink{group__Builtin_ga6621cfda0e336a7d1526736d602b203c}{executeBuiltin} (\hyperlink{classProcess}{Process} $\ast$p)
+\begin{DoxyCompactList}\small\item\em Executa comandos builtin. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__Builtin_ga0683b6bca056b22291107ea1b8b9220f}{
+std::list$<$ std::string $>$ \hyperlink{group__Builtin_ga0683b6bca056b22291107ea1b8b9220f}{history}}
+\label{group__Builtin_ga0683b6bca056b22291107ea1b8b9220f}
+
+\begin{DoxyCompactList}\small\item\em Historico de comandos. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Funcoes integradas \}@ 
+
+\subsection{Function Documentation}
+\hypertarget{group__Builtin_gaba0faeb21dd37ec84f38fbc4033224f3}{
+\index{Builtin@{Builtin}!background@{background}}
+\index{background@{background}!Builtin@{Builtin}}
+\subsubsection[{background}]{\setlength{\rightskip}{0pt plus 5cm}void background (
+\begin{DoxyParamCaption}
+\item[{int}]{id}
+\end{DoxyParamCaption}
+)}}
+\label{group__Builtin_gaba0faeb21dd37ec84f38fbc4033224f3}
+
+
+Coloca o job em execucao em background. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & ID do job. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em -\/ID} & \hyperlink{classJob}{Job} nao encontrado. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{group__Builtin_ga4fc7bbc95c3bcdc5faa5012ddf404913}{
+\index{Builtin@{Builtin}!changeDirectory@{changeDirectory}}
+\index{changeDirectory@{changeDirectory}!Builtin@{Builtin}}
+\subsubsection[{changeDirectory}]{\setlength{\rightskip}{0pt plus 5cm}void changeDirectory (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{dir}
+\end{DoxyParamCaption}
+)}}
+\label{group__Builtin_ga4fc7bbc95c3bcdc5faa5012ddf404913}
+
+
+Muda o diretorio atual. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dir} & Diretorio para o qual ocorrera a mudanca. \\
+\hline
+\end{DoxyParams}
+\hypertarget{group__Builtin_gad8fec49ba2349ed854c1172d14676697}{
+\index{Builtin@{Builtin}!echo@{echo}}
+\index{echo@{echo}!Builtin@{Builtin}}
+\subsubsection[{echo}]{\setlength{\rightskip}{0pt plus 5cm}void echo (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{char $\ast$}]{args\mbox{[}$\,$\mbox{]}}
+\end{DoxyParamCaption}
+)}}
+\label{group__Builtin_gad8fec49ba2349ed854c1172d14676697}
+
+
+Escreve os argumentos com 1 espaco entre eles. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & Numero de palavras a serem escritas + 1. \\
+\hline
+{\em args} & Palavras a serem escritas, comeca com \char`\"{}echo\char`\"{}. \\
+\hline
+\end{DoxyParams}
+\hypertarget{group__Builtin_ga6621cfda0e336a7d1526736d602b203c}{
+\index{Builtin@{Builtin}!executeBuiltin@{executeBuiltin}}
+\index{executeBuiltin@{executeBuiltin}!Builtin@{Builtin}}
+\subsubsection[{executeBuiltin}]{\setlength{\rightskip}{0pt plus 5cm}int executeBuiltin (
+\begin{DoxyParamCaption}
+\item[{{\bf Process} $\ast$}]{p}
+\end{DoxyParamCaption}
+)}}
+\label{group__Builtin_ga6621cfda0e336a7d1526736d602b203c}
+
+
+Executa comandos builtin. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p} & Processo a ser executado. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 Comando nao eh builtin 1 Faltam parametros 2 Erro nos parametros 0 Sucesso 
+\end{DoxyReturn}
+\hypertarget{group__Builtin_gac001b748ccd4d93fdf0359655bfc13f2}{
+\index{Builtin@{Builtin}!foreground@{foreground}}
+\index{foreground@{foreground}!Builtin@{Builtin}}
+\subsubsection[{foreground}]{\setlength{\rightskip}{0pt plus 5cm}void foreground (
+\begin{DoxyParamCaption}
+\item[{int}]{id}
+\end{DoxyParamCaption}
+)}}
+\label{group__Builtin_gac001b748ccd4d93fdf0359655bfc13f2}
+
+
+Coloca o job em execucao em foreground. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & ID do job. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em -\/ID} & \hyperlink{classJob}{Job} nao encontrado. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{group__Builtin_ga460421fbb6a8b9f00cece4ed94ea1ce1}{
+\index{Builtin@{Builtin}!sendsigterm@{sendsigterm}}
+\index{sendsigterm@{sendsigterm}!Builtin@{Builtin}}
+\subsubsection[{sendsigterm}]{\setlength{\rightskip}{0pt plus 5cm}void sendsigterm (
+\begin{DoxyParamCaption}
+\item[{int}]{id}
+\end{DoxyParamCaption}
+)}}
+\label{group__Builtin_ga460421fbb6a8b9f00cece4ed94ea1ce1}
+
+
+Envia um sinal SIGTERM para o job dado por id. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & ID do job. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em -\/id} & \hyperlink{classJob}{Job} inexistente. \\
+\hline
+\end{DoxyExceptions}

@@ -26,11 +26,13 @@ INTRODUCAO
 		Parser
 			Responsavel por ler e analisar uma linha de comando, e inicializar um Job com esses dados.
 			Reconhece como comando a sentenca gerada pela gramatica da especificacao do projeto. A linha deve ter no maximo 1023 caracteres.
-			Alem disso, e possivel fazer redirecionamento de erro utilizando os tokens 2> e 2>>.
+
 		Executor e Piper
 			Responsaveis por executar um Job.
+		
 		Redirector
 			Responsavel abrir, fechar e duplicar descritores de arquivo
+		
 		shooSH
 			Shell propriamente dita. E responsavel por chamar as outras classes e executar os comandos integrados.
 			Nao e possivel mesclar comandos integrados com comandos externos, ja que a execucao e feita de maneira diferente para os dois tipos de comando.
@@ -59,4 +61,9 @@ IMPLEMENTACAO
 
 COMENTARIOS
 
+	+Para execucao do makefile, eh necessario usar o comanto export LD_LIBRARY_PATH=<path>/lib
+
 	+ O arquivo teste.txt contem os comandos utilizados para testar as funcionalidades implementadas e suas respectivas saidas.
+
+CONSIDERACOES FINAIS
+	+ Quando mudamos o uso da shell com bibliotecas dinamicas, ocorre um erro de segmentation fault. Mas esse problema ocorre apos o retorno da main.

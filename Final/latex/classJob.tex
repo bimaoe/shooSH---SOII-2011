@@ -1,0 +1,199 @@
+\hypertarget{classJob}{
+\section{Job Class Reference}
+\label{classJob}\index{Job@{Job}}
+}
+
+
+Classe de \hyperlink{classJob}{Job}.  
+
+
+
+
+{\ttfamily \#include $<$Job.hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classJob_a5c8a3cd7594bc9d733b2cc96aa1d3048}{
+void \hyperlink{classJob_a5c8a3cd7594bc9d733b2cc96aa1d3048}{createProcess} (void)}
+\label{classJob_a5c8a3cd7594bc9d733b2cc96aa1d3048}
+
+\begin{DoxyCompactList}\small\item\em Cria um processo e o insere no vetor de processos. \end{DoxyCompactList}\item 
+\hypertarget{classJob_a2db562106fecee581006e4f955170d48}{
+void \hyperlink{classJob_a2db562106fecee581006e4f955170d48}{destroy} (void)}
+\label{classJob_a2db562106fecee581006e4f955170d48}
+
+\begin{DoxyCompactList}\small\item\em Desaloca todos os recursos. \end{DoxyCompactList}\item 
+\hypertarget{classJob_a4d30963a5021100ed0e42999b84d4975}{
+std::string {\bfseries getCommand} (void)}
+\label{classJob_a4d30963a5021100ed0e42999b84d4975}
+
+\item 
+\hypertarget{classJob_a240a158e548e4d5b5801088a9b762aa8}{
+int {\bfseries getID} (void)}
+\label{classJob_a240a158e548e4d5b5801088a9b762aa8}
+
+\item 
+\hypertarget{classJob_a27e1e223f7fa7ab1e8af9b982ac3e7fb}{
+pid\_\-t {\bfseries getPGID} (void)}
+\label{classJob_a27e1e223f7fa7ab1e8af9b982ac3e7fb}
+
+\item 
+\hyperlink{classProcess}{Process} $\ast$ \hyperlink{classJob_a1e03c533c695a6dc59d233eeca764233}{getProcess} (int i)
+\begin{DoxyCompactList}\small\item\em Retorna um processo do vetor de processos. \end{DoxyCompactList}\item 
+\hypertarget{classJob_a12204776a5d6a7f6cc525de61be9974f}{
+struct termios $\ast$ {\bfseries getTermios} (void)}
+\label{classJob_a12204776a5d6a7f6cc525de61be9974f}
+
+\item 
+\hypertarget{classJob_ae55908885f94c96171e8bd786ae18dbc}{
+bool {\bfseries hasPipe} (void)}
+\label{classJob_ae55908885f94c96171e8bd786ae18dbc}
+
+\item 
+\hypertarget{classJob_a6e1542f32aa8136ae241b5c0bf04625c}{
+bool {\bfseries hasExited} (void)}
+\label{classJob_a6e1542f32aa8136ae241b5c0bf04625c}
+
+\item 
+\hypertarget{classJob_af62d84ef6e6d3239b255660ad5e72473}{
+bool {\bfseries hasFailed} (void)}
+\label{classJob_af62d84ef6e6d3239b255660ad5e72473}
+
+\item 
+\hypertarget{classJob_afbc97d6397910dc485d7447c969864e0}{
+bool {\bfseries inBG} (void)}
+\label{classJob_afbc97d6397910dc485d7447c969864e0}
+
+\item 
+\hypertarget{classJob_ac9d379bfaf490e9a6e2d345b8c4c2e22}{
+bool {\bfseries isNop} (void)}
+\label{classJob_ac9d379bfaf490e9a6e2d345b8c4c2e22}
+
+\item 
+\hypertarget{classJob_adadaf29b984ba0c37951d2aeb3fc91d2}{
+bool {\bfseries isStopped} (void)}
+\label{classJob_adadaf29b984ba0c37951d2aeb3fc91d2}
+
+\item 
+\hypertarget{classJob_ad66e7590180ed37952b2345be6029678}{
+int {\bfseries size} (void)}
+\label{classJob_ad66e7590180ed37952b2345be6029678}
+
+\item 
+\hypertarget{classJob_ad24dd6e92c8e018a03af78dc1732c8bb}{
+void {\bfseries addFlag} (int)}
+\label{classJob_ad24dd6e92c8e018a03af78dc1732c8bb}
+
+\item 
+\hypertarget{classJob_aa5e064b7c3ec4b7612005a8d028fe1f9}{
+void {\bfseries cont} (void)}
+\label{classJob_aa5e064b7c3ec4b7612005a8d028fe1f9}
+
+\item 
+\hypertarget{classJob_a9519727231781f79a5750b1439e61d7b}{
+void {\bfseries setBG} (bool)}
+\label{classJob_a9519727231781f79a5750b1439e61d7b}
+
+\item 
+\hypertarget{classJob_a9b4f744fbb9b204b980c15fe0bf5f64e}{
+void {\bfseries setCommand} (std::string command)}
+\label{classJob_a9b4f744fbb9b204b980c15fe0bf5f64e}
+
+\item 
+\hypertarget{classJob_ab0ca6966e266557e56cc570fdfa8c8b0}{
+void {\bfseries setID} (int)}
+\label{classJob_ab0ca6966e266557e56cc570fdfa8c8b0}
+
+\item 
+\hypertarget{classJob_a493768baefbfd9378965cff539b139cc}{
+void {\bfseries setPGID} (pid\_\-t)}
+\label{classJob_a493768baefbfd9378965cff539b139cc}
+
+\item 
+void \hyperlink{classJob_ae958dc9b0409a59b7b5c958b833db874}{setProcessCommand} (char $\ast$$\ast$command, int size)
+\begin{DoxyCompactList}\small\item\em Seta o comando do ultimo processo inserido. \end{DoxyCompactList}\item 
+void \hyperlink{classJob_a4413c7235764c98d245b629e4db11b3e}{setProcessFile} (std::string filename, int flag)
+\begin{DoxyCompactList}\small\item\em Seta o nome do arquivo relacionado a um tipo de redirecionamento. \end{DoxyCompactList}\item 
+\hypertarget{classJob_a81105bcd389e9d308c014a0f2bbf6ff6}{
+void {\bfseries stop} (void)}
+\label{classJob_a81105bcd389e9d308c014a0f2bbf6ff6}
+
+\item 
+\hypertarget{classJob_a045592d4a0f2fc54d14cdb970217ea78}{
+void {\bfseries print} (void)}
+\label{classJob_a045592d4a0f2fc54d14cdb970217ea78}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Classe de \hyperlink{classJob}{Job}. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classJob_a1e03c533c695a6dc59d233eeca764233}{
+\index{Job@{Job}!getProcess@{getProcess}}
+\index{getProcess@{getProcess}!Job@{Job}}
+\subsubsection[{getProcess}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Process} $\ast$ Job::getProcess (
+\begin{DoxyParamCaption}
+\item[{int}]{i}
+\end{DoxyParamCaption}
+)}}
+\label{classJob_a1e03c533c695a6dc59d233eeca764233}
+
+
+Retorna um processo do vetor de processos. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em i} & Indice do processo no vetor. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classJob_ae958dc9b0409a59b7b5c958b833db874}{
+\index{Job@{Job}!setProcessCommand@{setProcessCommand}}
+\index{setProcessCommand@{setProcessCommand}!Job@{Job}}
+\subsubsection[{setProcessCommand}]{\setlength{\rightskip}{0pt plus 5cm}void Job::setProcessCommand (
+\begin{DoxyParamCaption}
+\item[{char $\ast$$\ast$}]{command, }
+\item[{int}]{size}
+\end{DoxyParamCaption}
+)}}
+\label{classJob_ae958dc9b0409a59b7b5c958b833db874}
+
+
+Seta o comando do ultimo processo inserido. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em command} & Matriz de caracteres cuja ultima linha deve ser (char$\ast$)NULL. \\
+\hline
+{\em size} & Numero de linhas da matriz sem contar a nula. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classJob_a4413c7235764c98d245b629e4db11b3e}{
+\index{Job@{Job}!setProcessFile@{setProcessFile}}
+\index{setProcessFile@{setProcessFile}!Job@{Job}}
+\subsubsection[{setProcessFile}]{\setlength{\rightskip}{0pt plus 5cm}void Job::setProcessFile (
+\begin{DoxyParamCaption}
+\item[{std::string}]{filename, }
+\item[{int}]{flag}
+\end{DoxyParamCaption}
+)}}
+\label{classJob_a4413c7235764c98d245b629e4db11b3e}
+
+
+Seta o nome do arquivo relacionado a um tipo de redirecionamento. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & Nome do arquivo. \\
+\hline
+{\em flag} & Flag indicando o tipo de redirecionamento \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+lib/Job.hpp\item 
+lib/Job.cpp\end{DoxyCompactItemize}
